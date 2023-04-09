@@ -33,6 +33,7 @@ The supported operations on each of these resources are:
 
 """
 
+
 # The Meal class implements the REST operations for the /meals resource
 class Meal(Resource):
     pass
@@ -40,4 +41,14 @@ class Meal(Resource):
 
 # The Dishes class implements the REST operations for the /dishes resource
 class Dishes(Resource):
+    pass
+
+
+# The ID class implements the REST operations for the /dishes/{ID} or /meals/{ID} resource
+class ID(Resource):
+    pass
+
+
+# The Name class implements the REST operations for the /dishes/{name} or /meals/{name} resource
+class Name(Resource):
     pass
