@@ -3,6 +3,7 @@
 # To run this program, in terminal window issue the cmd:
 #   python3 rest-word-svr-v1.py
 
+
 # you must install the packages Flask and flask-restful before running this program
 
 # The resources are:
