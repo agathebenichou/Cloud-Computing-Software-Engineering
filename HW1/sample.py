@@ -25,7 +25,7 @@
 #   PUT (replace a word with a given key with another word)
 
 from flask import Flask  # , jsonify
-from flask_restful import Resource, Api, reqparse
+from flask_restful import Resource, Api, reqparse # pip install flask-restful
 
 app = Flask(__name__)  # initialize Flask
 api = Api(app)  # create API
