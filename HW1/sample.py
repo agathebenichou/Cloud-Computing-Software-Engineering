@@ -2,10 +2,7 @@
 # It uses Flask to build a RESTful service in Python.
 # To run this program, in terminal window issue the cmd:
 #   python3 rest-word-svr-v1.py
-# alternatively, comment out "app.run..." cmd in __main__ and issue the following cmds
-#   export FLASK_APP-"rest-word-svr-v1.py"
-#   flask run --port 8000     (or whatever port you want to run on.  if no "--port" option specified, it is port 5000)
-# flask will return the IP and port the app is running on
+
 # you must install the packages Flask and flask-restful before running this program
 
 # The resources are:
@@ -17,8 +14,10 @@
 # /words:
 #   POST (add a word, the key for this word is returned),
 #   GET (get the entire collection of words, together with their keys)
+
 # /words/total:
 #   GET (gets the integer equal to the total number of words in a collection)
+
 # /words/keys/{key}:
 #   GET (gets the word associated with a given key)
 #   DELETE (delete a word with a given key)
@@ -26,6 +25,7 @@
 
 from flask import Flask  # , jsonify
 from flask_restful import Resource, Api, reqparse # pip install flask-restful
+
 
 app = Flask(__name__)  # initialize Flask
 api = Api(app)  # create API
