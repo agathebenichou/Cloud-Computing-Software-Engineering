@@ -31,6 +31,7 @@ The supported operations on each of these resources are:
     GET (return the JSON object of the dish given the ID or name)
     DELETE (delete a dish of the given ID or name)
 
+# ninja API key: 6zoIr+IoEg7H2GQGVDxw+g==WdtcKEIt1DOIoGKj
 """
 
 
