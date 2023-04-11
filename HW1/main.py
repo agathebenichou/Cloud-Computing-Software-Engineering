@@ -8,7 +8,7 @@ This RESTful API allows users to:
 - Create and store meals by specifying 3 dishes that comprise that meal (appetizer, main, dessert)
 - Retrieve, update, delete dishes and meals 
 
-""" 
+"""
 
 # Initialize Flask app
 app = Flask(__name__)
