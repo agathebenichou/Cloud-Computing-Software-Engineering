@@ -8,7 +8,11 @@ api = Api(app)  # create API
 
 
 class DishCollection:
-    """ DishCollection stores the dishes and perform operations on them    """
+    """ DishCollection stores the dishes and performs operations on them
+        Each dish is stored in a dictionary with a unique numerical key called id,
+        and a value of the following:
+            dish name, calories, size (default 100g), sodium, suger
+    """
 
     def __init__(self):
         # self.opNum is the number of insertDish operations performed so far.
@@ -31,16 +35,15 @@ class DishCollection:
 
     def insertDish(self, dish_name):
         """ Insert a new dish based on dish name
-
-        :param dish_name:
-        :return:
+            param: dish_name
+            return: id of the new dish (key)
         """
-        # This function SHOULD CHECK if the dish already exists and if so return an error
-        # Currently, it lets the same dish exist with different keys
+        # This function checks if the dish already exists and if so returns an error
 
-        if dish_name in self.dishes.values():  # If dish already exists
-            print("DishCollection: dish ", dish_name, " already exists")
-            return 0  # key = 0 indicates cannot be inserted
+        for id, dish in self.dishes.items():
+            if dish[0] == dish_name:
+                print("DishCollection: dish ", dish_name, " already exists")
+                return 0  # key = 0 indicates cannot be inserted
 
         self.opNum += 1 # increment latest operation number
         key = self.opNum # assign new key to new operation number
@@ -51,13 +54,9 @@ class DishCollection:
 
         # Check status code of response
         if response.status_code == requests.codes.ok:
-
-            # TODO - response could be a single JSON object or a list of JSON objects
-            # TODO - extract calories, serving size in grams, amount of sodium in mg, amount of sugar in grams
-            # Convert and insert the JSON response to a the dishes dictionary
-            # todo - response.text
-            self.dishes[dish_name] = response.json()
-            print("DishCollection: inserted dish ", dish_name, " with key ", key)
+            json_data = response.json()
+            self.dishes[key] = [dish_name, json_data['calories'], json_data['serving_size_grams'], json_data['sodium_mg'], json_data['sugar_g']]
+            print("DishCollection: dish ", dish_name, " was added")
         else:
             print("Error:", response.status_code, response.text)
 
@@ -90,29 +89,40 @@ class DishCollection:
 
     def delDishName(self, name):
 
-        if name in self.dishes.values():  # the key exists in collection
-            d = self.dishes[id] # todo : map value back to id
-            del self.dishes[id]
-            print("DishCollection: deleted dish ", d, " with name ", name)
-            return True, d
+        id_to_delete = None
+        for id, dish in self.dishes.items():
+            if dish[0] == name:
+                id_to_delete = id
+                break
+
+        # Delete dish from dictionary by key
+        if id_to_delete is not None:
+            del self.dishes[id_to_delete]
+            print("DishCollection: deleted dish with name ", name)
         else:
-            return False, None  # the key does not exist in the collection
+            print("DishCollection: did not find dish_name ", name)
+            return False, None
 
     def findDishName(self, name):
         """ Return a single JSON object of the dish specified by its name
 
-        :param name: the name of the dish
-        :return: JSON object of the dish
+        param name: the name of the dish
+        return: value of the dish
         """
 
-        if name in self.dishes.values():  # the key exists in collection
-            d = self.dishes[id] # todo : map value back to id
-            print("DishCollection: found dish ", d, " with name ", name)
-            return True, d
-        else:
-            print("DishCollection: did not find name", name)
-            return False, None  # the key does not exist in the collection
+        fetch_id = None
+        for id, dish in self.dishes.items():
+            if dish[0] == name:
+                fetch_id = id
+                break
 
+        # Return dish from dictionary by key
+        if fetch_id is not None:
+            print("DishCollection: found dish ", self.dishes[fetch_id][0], " with id ", fetch_id)
+            return True, self.dishes[fetch_id]
+        else:
+            print("DishCollection: did not find dish_name ", name)
+            return False, None  # the key does not exist in the collection
 
 class MealCollection:
     """ MealCollection stores the dishes and perform operations on them    """
