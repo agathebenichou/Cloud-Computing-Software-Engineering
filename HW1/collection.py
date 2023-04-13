@@ -1,8 +1,4 @@
-from flask import Flask, Api
 import requests
-
-app = Flask(__name__)  # initialize Flask
-api = Api(app)  # create API
 
 # todo - add documentation to each method
 
@@ -31,6 +27,7 @@ class DishCollection:
         print(self.dishes)
 
         # todo - make sure this is indexed by ID
+        #return dict(sorted(self.dishes.keys()))
         return self.dishes
 
     def insertDish(self, dish_name):
@@ -38,12 +35,14 @@ class DishCollection:
             param: dish_name
             return: id of the new dish (key)
         """
-        # This function checks if the dish already exists and if so returns an error
 
+        # Iterate over existing dishes collection and check if dish with same name already exists
         for id, dish in self.dishes.items():
-            if dish[0] == dish_name:
+
+            # If dish already exists, returns an error
+            if dish['name'] == dish_name:
                 print("DishCollection: dish ", dish_name, " already exists")
-                return 0  # key = 0 indicates cannot be inserted
+                return 0  # todo - what to return?
 
         self.opNum += 1 # increment latest operation number
         key = self.opNum # assign new key to new operation number
@@ -55,7 +54,16 @@ class DishCollection:
         # Check status code of response
         if response.status_code == requests.codes.ok:
             json_data = response.json()
-            self.dishes[key] = [dish_name, json_data['calories'], json_data['serving_size_grams'], json_data['sodium_mg'], json_data['sugar_g']]
+            for _dish in json_data:
+                self.dishes[key] = {
+                    "name": dish_name,
+                    "ID": key,
+                    "cal": _dish["calories"],
+                    "size": _dish["serving_size_g"],
+                    "sodium": _dish["sodium_mg"],
+                    "sugar": _dish["sugar_g"]
+                }
+                print(self.dishes)
             print("DishCollection: dish ", dish_name, " was added")
         else:
             print("Error:", response.status_code, response.text)
@@ -150,6 +158,12 @@ class MealCollection:
     def insertMeal(self, meal_name):
         # This function SHOULD CHECK if the dish already exists and if so return an error
         # Currently, it lets the same dish exist with different keys
+
+        '''
+        when use creates a meal, the program needs to compute the total calories, sodium, sugar by summing
+        those components for all the individual dishes that make up the meal
+        - if meal gets updated, then those components needs to be updated as well
+        '''
 
         if meal_name in self.meals.values():  # If dish already exists
             print("MealCollection: dish ", meal_name, " already exists")

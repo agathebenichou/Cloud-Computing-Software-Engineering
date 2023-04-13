@@ -10,6 +10,8 @@ The resources are:
 - /dishes/{ID} or /dishes/{name}    Each dish resource is expressed with a specific JSON object
 """
 
+# todo  - check all functioanlity against requirements in powerpoint
+
 # create DishCollection instance with global scope
 dishColl = DishCollection()
 
@@ -164,14 +166,12 @@ class Meals(Resource):
         GET (return the JSON object listing all meals, indexed by ID)
     """
 
-    # Note that for Meal class, the ID/name will be supplied to all requests as a parameter
     global mealColl
 
     def get(self):
         """ Retrieves a specific meal from the collection
 
-        :param key: the key used to search for a meal (either ID or name)
-        :return: the meal object and the status code
+        :return: all meal objects and status code
         """
 
         return mealColl.retrieveAllMeals(), 200
@@ -186,10 +186,29 @@ class Meals(Resource):
         # get argument being passed in query string
         parser = reqparse.RequestParser()  # initialize parse
 
+        # todo
+        '''
+        post will be a dict of {name, appretizer, main, dessert}
+        need to parse dict and pass components (or pass componens and parse in collection)
+        PASSES DISH IDs, not names
+        if incorrect / doesnt exist dish id, return -5, 422
+        '''
+
         # in the query_string, expect "?name=m" where m is the name of the meal to be added
         parser.add_argument('name', location='args', required=True)
         args = parser.parse_args()  # parse arguments into a dictionary structure
         m = args["name"]
+
+        # todo
+        '''
+        POST can retur a non positve ID with the following meaning:
+        0 means that request content-type is not application/json. Status code 415 (Unsupported Media Type)
+        -1 means that one of the required parameters was not given or not specified correctly. Status code 422
+        (Unprocessable Entity)
+        -2 means that a meal of the given name already exists. Status code 422 (Unprocessable Entity)
+        -6 means that one of the sent dish IDs (appetizer, main, dessert) does not exist. Status code 422
+        (Unprocessable Entity)* 
+        '''
 
         # add d to collection
         key = mealColl.insertMeal(m)
@@ -216,9 +235,15 @@ class MealsID(Resource):
         :return: the deleted meal and the status code
         """
 
+        # todo
+        '''
+        retur id of the meal deleted 
+        if meal id not does not exist, return -5, 404 
+        '''
+
         b, w = mealColl.delMealID(id)
         if b:
-            return w, 200  # return deleted word and HTTP 200 ok code
+            return w, 200  # return deleted meal and HTTP 200 ok code
         else:
             return 0, 404  # return 0 for key value (error) and Not Found error code
 
@@ -229,9 +254,14 @@ class MealsID(Resource):
         :return: the meal and the status code
         """
 
+        # todo
+        ''' send id of the meal and receive back the json meal object
+        if meal id not does not exist, return -5, 404 
+        '''
+
         (b, w) = mealColl.findMealID(id)
         if b:
-            return w, 200  # return the word and HTTP 200 ok code
+            return w, 200  # return the meal and HTTP 200 ok code
         else:
             return 0, 404  # return 0 for key and Not Found error code
 
@@ -241,6 +271,11 @@ class MealsID(Resource):
         :param id: the ID of the meal to be modified
         :return: the JSON object of the modified meal
         """
+
+        # todo
+        ''' successful put request returns 200
+        modify or add a new meal
+        '''
 
         # in the query_string, "?word=w" where w is the word to replace the existing word
         parser = reqparse.RequestParser()  # initialize parse
@@ -272,6 +307,13 @@ class MealsName(Resource):
         :return: the deleted meal and the status code
         """
 
+
+        # todo
+        '''
+        retur id of the meal deleted 
+        if meal id not does not exist, return -5, 404 
+        '''
+
         b, w = mealColl.delMealName(name)
         if b:
             return w, 200  # return deleted word and HTTP 200 ok code
@@ -284,6 +326,12 @@ class MealsName(Resource):
         :param id: the ID of the meal to retrieve
         :return: the meal and the status code
         """
+
+        # todo
+        ''' send id of the meal and receive back the json meal object
+        if meal id not does not exist, return -5, 404 
+        '''
+
 
         (b, w) = mealColl.findMealName(name)
         if b:
