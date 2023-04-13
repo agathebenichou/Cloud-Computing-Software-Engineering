@@ -15,6 +15,8 @@ The resources are:
 # create DishCollection instance with global scope
 dishColl = DishCollection()
 
+# todo- seeing weird behavior with dishe collection being deleted
+
 
 class Dishes(Resource):
     """ The Dishes class implements the REST operations for the /dishes resource
@@ -26,6 +28,7 @@ class Dishes(Resource):
 
     global dishColl
 
+    # COMPLETED
     def get(self):
         """ Retrieves a specific dish from the collection
 
@@ -46,28 +49,24 @@ class Dishes(Resource):
         parser = reqparse.RequestParser()  # initialize parse
 
         # in the query_string, expect "?name=d" where d is the name of the dish to be added
-        parser.add_argument('name', location='args', required=True)
+        parser.add_argument('name', location='args', required=True, help=f"Query String expects 'name'")
         args = parser.parse_args()  # parse arguments into a dictionary structure
-        d = args["name"]
 
-        # add d to collection
-        id = dishColl.insertDish(d)
+        d = args["name"] #parse dish name from arguments
+        id = dishColl.insertDish(d)  # add d to collection
 
-        # todo - if successful,returns dish ID, a positive integeer and the 201 code
-        # todo - if not, return non pos ID (0, -1, -2, -3, -4) slide number 9
-        '''
+        # todo = apply these cors
+        ''' 
         • 0 means that request content-type is not application/json. Status code 415 (Unsupported Media Type)
-        • -1 means that 'name' parameter was not specified in the message body. Status code 422
-        (Unprocessable Content)
-        • -2 means that dish of given name already exists. Status code 422 (Unprocessable Content)
-        • -3 means that api.api-ninjas.com/v1/nutrition does not recognize this dish name. Status code 422
-        (Unprocessable Content)
-        • -4 means that api.api-ninjas.com/v1/nutrition was not reachable. Status code 504 (Gateway Timeout)
+        • -1 means that 'name' parameter was not specified in the message body. Status code 422 (Unprocessable Content)
         '''
-        if id == 0:   # word already exists
+        if id is None:   # dish already exists
             return id, 422
+        elif id == -4: # api.api-ninjas.com/v1/nutrition was not reachable
+            return 504
         return id, 201
 
+    # COMPLETED
     def delete(self):
         """ Deleting the entire collection is not allowed
 
@@ -87,6 +86,7 @@ class DishesID(Resource):
 
     global dishColl
 
+    # COMPLETED
     def get(self, id):
         """ Retrieve a specific dish from the collection based off its ID
 
@@ -94,13 +94,13 @@ class DishesID(Resource):
         :return: the dish JSON object and the status code
         """
 
-        # todo - if dish id does not esist, return -5 with status code 404
-        (b, d) = dishColl.findDishID(id)
-        if b:
-            return d, 200  # return the word and HTTP 200 ok code
+        (status, dish_obj) = dishColl.findDishID(id)
+        if status:
+            return dish_obj, 200  # return the word and HTTP 200 ok code
         else:
-            return 0, 404  # return 0 for key and Not Found error code
+            return -5, 404  # return 0 for key and Not Found error code
 
+    # COMPLETED
     def delete(self, id):
         """ Delete a dish from the collection based off its ID
 
@@ -108,13 +108,11 @@ class DishesID(Resource):
         :return: the deleted dish ID and the status code
         """
 
-        # todo - if dish id does not esist, return -5 with status code 404
-
-        b, d = dishColl.delDishID(id)
-        if b:
-            return id, 200  # return deleted dosj and HTTP 200 ok code
+        (status, dish_id) = dishColl.delDishID(id)
+        if status:
+            return dish_id, 200  # return deleted dosj and HTTP 200 ok code
         else:
-            return 0, 404  # return 0 for id value (error) and Not Found error code
+            return -5, 404  # return 0 for id value (error) and Not Found error code
 
 
 class DishesName(Resource):
@@ -127,31 +125,33 @@ class DishesName(Resource):
 
     global dishColl
 
+    # COMPLETED
     def delete(self, name):
         """ Delete a dish from the collection based off its name
 
         :param name: the ma,e of the dish to delete
         :return: the deleted dish and the status code
         """
-        # todo - if dish name does not esist, return -5 with status code 404
-        b, w = dishColl.delDishName(name)
-        if b:
-            return name, 200  # return deleted word and HTTP 200 ok code
-        else:
-            return 0, 404  # return 0 for key value (error) and Not Found error code
 
+        (status, dish_id) = dishColl.delDishName(name)
+        if status:
+            return dish_id, 200  # return deleted word and HTTP 200 ok code
+        else:
+            return -5, 404  # return 0 for key value (error) and Not Found error code
+
+    # COMPLETED
     def get(self, name):
         """ Retrieve a specific dish from the collection based off its ID
 
         :param id: the ID of the dish to retrieve
         :return: the dish and the status code
         """
-        # todo - if dish id does not esist, return -5 with status code 404
-        (b, w) = dishColl.findDishName(name)
-        if b:
-            return name, 200  # return the word and HTTP 200 ok code
+
+        (status, dish_obj) = dishColl.findDishName(name)
+        if status:
+            return dish_obj, 200  # return the word and HTTP 200 ok code
         else:
-            return 0, 404  # return 0 for key and Not Found error code
+            return -5, 404  # return 0 for key and Not Found error code
 
 
 # create MealCollection instance with global scope

@@ -18,6 +18,7 @@ class DishCollection:
         # self.dishes is a dictionary of the form {key:dish} where key is an integer and dish is a JSON object
         self.dishes = {}  # dishes in the collection
 
+    # COMPLETED
     def retrieveAllDishes(self):
         """ Retrieve all dicts containing dishes
 
@@ -26,50 +27,52 @@ class DishCollection:
         print("DishCollection: retrieving all dishes:")
         print(self.dishes)
 
-        # todo - make sure this is indexed by ID
-        #return dict(sorted(self.dishes.keys()))
         return self.dishes
 
+    # COMPLETED
     def insertDish(self, dish_name):
         """ Insert a new dish based on dish name
+
             param: dish_name
-            return: id of the new dish (key)
+            return: id of the new dish (key) and status code
         """
 
         # Iterate over existing dishes collection and check if dish with same name already exists
         for id, dish in self.dishes.items():
-
-            # If dish already exists, returns an error
-            if dish['name'] == dish_name:
+            if dish["name"] == dish_name: # If dish already exists, returns an error
                 print("DishCollection: dish ", dish_name, " already exists")
-                return 0  # todo - what to return?
+                return None
 
         self.opNum += 1 # increment latest operation number
-        key = self.opNum # assign new key to new operation number
 
-        # Query API Ninja /nutrition
-        api_url = 'https://api.api-ninjas.com/v1/nutrition?query={}'.format(dish_name)
-        response = requests.get(api_url, headers={'X-Api-Key': '6zoIr+IoEg7H2GQGVDxw+g==WdtcKEIt1DOIoGKj'})
+        try:
+            # Query API Ninja /nutrition
+            api_url = 'https://api.api-ninjas.com/v1/nutrition?query={}'.format(dish_name)
+            response = requests.get(api_url, headers={'X-Api-Key': '6zoIr+IoEg7H2GQGVDxw+g==WdtcKEIt1DOIoGKj'})
 
-        # Check status code of response
-        if response.status_code == requests.codes.ok:
-            json_data = response.json()
-            for _dish in json_data:
-                self.dishes[key] = {
-                    "name": dish_name,
-                    "ID": key,
-                    "cal": _dish["calories"],
-                    "size": _dish["serving_size_g"],
-                    "sodium": _dish["sodium_mg"],
-                    "sugar": _dish["sugar_g"]
-                }
-                print(self.dishes)
-            print("DishCollection: dish ", dish_name, " was added")
-        else:
-            print("Error:", response.status_code, response.text)
+            if response.status_code == requests.codes.ok: # Check status code of response
+                json_data = response.json()
+                for _dish in json_data:
+                    self.dishes[self.opNum] = {
+                        "name": dish_name,
+                        "ID": self.opNum,
+                        "cal": _dish["calories"],
+                        "size": _dish["serving_size_g"],
+                        "sodium": _dish["sodium_mg"],
+                        "sugar": _dish["sugar_g"]
+                    }
+                    print(self.dishes)
+                print("DishCollection: dish ", dish_name, " was added")
+            else:
+                print("Error with Api Ninja/Nutrition:", response.status_code, response.text)
+                return -4
+        except Exception as e:
+            print(f"Api Ninja/Nutrition not reachable: {e}")
+            return -4
 
-        return key
+        return self.opNum
 
+    # COMPLETED
     def findDishID(self, id):
         """ Return a single JSON object of the dish specified by its ID
 
@@ -85,21 +88,23 @@ class DishCollection:
             print("DishCollection: did not find id", id)
             return False, None  # the id does not exist in the collection
 
+    # COMPLETED
     def delDishID(self, id):
 
         if id in self.dishes.keys():  # the key exists in collection
             d = self.dishes[id]
             del self.dishes[id]
             print("DishCollection: deleted dish ", d, " with id ", id)
-            return True, d
+            return True, id
         else:
             return False, None  # the key does not exist in the collection
 
+    # COMPLETED
     def delDishName(self, name):
 
         id_to_delete = None
         for id, dish in self.dishes.items():
-            if dish[0] == name:
+            if dish["name"] == name:
                 id_to_delete = id
                 break
 
@@ -107,10 +112,12 @@ class DishCollection:
         if id_to_delete is not None:
             del self.dishes[id_to_delete]
             print("DishCollection: deleted dish with name ", name)
+            return True, id_to_delete
         else:
             print("DishCollection: did not find dish_name ", name)
             return False, None
 
+    # COMPLETED
     def findDishName(self, name):
         """ Return a single JSON object of the dish specified by its name
 
@@ -120,17 +127,17 @@ class DishCollection:
 
         fetch_id = None
         for id, dish in self.dishes.items():
-            if dish[0] == name:
+            if dish["name"] == name:
                 fetch_id = id
                 break
 
-        # Return dish from dictionary by key
-        if fetch_id is not None:
-            print("DishCollection: found dish ", self.dishes[fetch_id][0], " with id ", fetch_id)
+        if fetch_id is not None: # Return dish from dictionary by key
+            print("DishCollection: found dish ", self.dishes[fetch_id], " with id ", fetch_id)
             return True, self.dishes[fetch_id]
         else:
             print("DishCollection: did not find dish_name ", name)
             return False, None  # the key does not exist in the collection
+
 
 class MealCollection:
     """ MealCollection stores the dishes and perform operations on them    """
