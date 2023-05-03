@@ -10,17 +10,17 @@ The resources are:
 - /dishes/{ID} or /dishes/{name}    Each dish resource is expressed with a specific JSON object
 """
 
-# todo  - check all functioanlity against requirements in powerpoint
+# todo  - check all functionality against requirements in powerpoint
 
 # create DishCollection instance with global scope
 dishColl = DishCollection()
 
-# todo- seeing weird behavior with dishe collection being deleted
+# todo- seeing weird behavior with dish collection being deleted
 
 
 class Dishes(Resource):
-    """ The Dishes class implements the REST operations for the /dishes resource
-
+    """
+    The Dishes class implements the REST operations for the /dishes resource
     /dishes
         POST (add a dish of the given name)
         GET (return the JSON object listing all dishes, indexed by ID)
@@ -30,8 +30,8 @@ class Dishes(Resource):
 
     # COMPLETED
     def get(self):
-        """ Retrieves a specific dish from the collection
-
+        """
+        Retrieves a specific dish from the collection
         :param key: the key used to search for a dish (either ID or name)
         :return: JSON object listing all dishes (indexed by ID) and the status code
         """
@@ -39,8 +39,8 @@ class Dishes(Resource):
         return dishColl.retrieveAllDishes(), 200
 
     def post(self):
-        """ Adds a dish to /dishes
-
+        """
+        Adds a dish to /dishes and returns its ID
         :param key: name used to add a dish
         :return: id: dish ID given to the dish
         """
@@ -152,6 +152,7 @@ class DishesName(Resource):
             return dish_obj, 200  # return the word and HTTP 200 ok code
         else:
             return -5, 404  # return 0 for key and Not Found error code
+                            # Why -5, isnt it supposed to be 0?
 
 
 # create MealCollection instance with global scope
@@ -166,6 +167,7 @@ class Meals(Resource):
         GET (return the JSON object listing all meals, indexed by ID)
     """
 
+    global dishColl
     global mealColl
 
     def get(self):
@@ -177,42 +179,49 @@ class Meals(Resource):
         return mealColl.retrieveAllMeals(), 200
 
     def post(self):
-        """ Adds a meal to /meals
-
-        :param key: name used to add a meal
+        """
+        Adds a meal to /meals
+        :param name: name used to add a meal, appetizer: appetizer dish ID, main: main dish ID, dessert: dessert dish ID
         :return: id: ID given to the meal
         """
+        '''
+        post will be a query string of \meals?name=<meal_name>&appetizer=<appetizer_id>&main=<main_id>&dessert=<dessert_id>
+        Will parse string payload and pass components using dishCollection
+        Passes Dish IDs, not names
+        '''
 
-        # get argument being passed in query string
+        # in the query_string, expect \meals?name=<meal_name>&appetizer=<appetizer_id>&main=<main_id>&dessert=<dessert_id>
         parser = reqparse.RequestParser()  # initialize parse
+        parser.add_argument('name', type=str, required=True, help='Name of the meal')
+        parser.add_argument('appetizer', type=int, required=True, help='ID of the appetizer dish')
+        parser.add_argument('main', type=int, required=True, help='ID of the main dish')
+        parser.add_argument('dessert', type=int, required=True, help='ID of the dessert dish')
+        args = parser.parse_args()
 
-        # todo
-        '''
-        post will be a dict of {name, appretizer, main, dessert}
-        need to parse dict and pass components (or pass componens and parse in collection)
-        PASSES DISH IDs, not names
-        if incorrect / doesnt exist dish id, return -5, 422
-        '''
+        meal_name = args['name']
+        appetizer_id = args['appetizer']
+        main_id = args['main']
+        dessert_id = args['dessert']
 
-        # in the query_string, expect "?name=m" where m is the name of the meal to be added
-        parser.add_argument('name', location='args', required=True)
-        args = parser.parse_args()  # parse arguments into a dictionary structure
-        m = args["name"]
+        print(f"meal name :{meal_name}")
+        print(f"appetizer id :{appetizer_id}")
+        print(f"main id :{main_id}")
+        print(f"dessert id :{dessert_id}")
 
-        # todo
         '''
-        POST can retur a non positve ID with the following meaning:
+        0 means that a meal of the given name already exists. Status code 422 (Unprocessable Entity)
+        todo:
+        POST can return a non positive ID with the following meaning:
         0 means that request content-type is not application/json. Status code 415 (Unsupported Media Type)
         -1 means that one of the required parameters was not given or not specified correctly. Status code 422
         (Unprocessable Entity)
-        -2 means that a meal of the given name already exists. Status code 422 (Unprocessable Entity)
         -6 means that one of the sent dish IDs (appetizer, main, dessert) does not exist. Status code 422
         (Unprocessable Entity)* 
         '''
 
         # add d to collection
-        key = mealColl.insertMeal(m)
-        if key == 0:  # word already exists
+        key = mealColl.insertMeal(meal_name, appetizer_id, main_id, dessert_id, dishColl)
+        if key == 0:  # meal already exists
             return key, 422
         return key, 201
 
