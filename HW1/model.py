@@ -1,6 +1,6 @@
 from flask_restful import Resource, reqparse
 from collection import DishCollection, MealCollection
-
+from flask import Flask, request
 """
 The resources are:
 
@@ -184,45 +184,32 @@ class Meals(Resource):
         :param name: name used to add a meal, appetizer: appetizer dish ID, main: main dish ID, dessert: dessert dish ID
         :return: id: ID given to the meal
         """
+
         '''
-        post will be a query string of \meals?name=<meal_name>&appetizer=<appetizer_id>&main=<main_id>&dessert=<dessert_id>
-        Will parse string payload and pass components using dishCollection
+        post will be a JSON object with fields: name, appetizer, main, dessert
+        Will parse JSON object and pass components using dishCollection
         Passes Dish IDs, not names
         '''
-
-        # in the query_string, expect \meals?name=<meal_name>&appetizer=<appetizer_id>&main=<main_id>&dessert=<dessert_id>
-        parser = reqparse.RequestParser()  # initialize parse
-        parser.add_argument('name', type=str, required=True, help='Name of the meal')
-        parser.add_argument('appetizer', type=int, required=True, help='ID of the appetizer dish')
-        parser.add_argument('main', type=int, required=True, help='ID of the main dish')
-        parser.add_argument('dessert', type=int, required=True, help='ID of the dessert dish')
-        args = parser.parse_args()
-
-        meal_name = args['name']
-        appetizer_id = args['appetizer']
-        main_id = args['main']
-        dessert_id = args['dessert']
-
-        print(f"meal name :{meal_name}")
-        print(f"appetizer id :{appetizer_id}")
-        print(f"main id :{main_id}")
-        print(f"dessert id :{dessert_id}")
+        data = request.json
+        meal_name = data['name']
+        appetizer_id = data['appetizer']
+        main_id = data['main']
+        dessert_id = data['dessert']
 
         '''
-        0 means that a meal of the given name already exists. Status code 422 (Unprocessable Entity)
-        todo:
-        POST can return a non positive ID with the following meaning:
-        0 means that request content-type is not application/json. Status code 415 (Unsupported Media Type)
-        -1 means that one of the required parameters was not given or not specified correctly. Status code 422
+        ##### todo:
+        • 0 means that request content-type is not application/json. Status code 415 (Unsupported Media Type)
+        • -1 means that one of the required parameters was not given or not specified correctly. Status code 422
         (Unprocessable Entity)
-        -6 means that one of the sent dish IDs (appetizer, main, dessert) does not exist. Status code 422
-        (Unprocessable Entity)* 
+        • -2 means that a meal of the given name already exists. Status code 422 (Unprocessable Entity)
+        • -6 means that one of the sent dish IDs (appetizer, main, dessert) does not exist. Status code 422
+        (Unprocessable Entity)*
         '''
 
         # add d to collection
         key = mealColl.insertMeal(meal_name, appetizer_id, main_id, dessert_id, dishColl)
         if key == 0:  # meal already exists
-            return key, 422
+            return -2, 422
         return key, 201
 
 
@@ -257,8 +244,8 @@ class MealsID(Resource):
             return 0, 404  # return 0 for key value (error) and Not Found error code
 
     def get(self, id):
-        """ Retrieve a specific meal from the collection based off its ID
-
+        """
+        Retrieve a specific meal from the collection based off its ID
         :param id: the ID of the meal to retrieve
         :return: the meal and the status code
         """
@@ -268,11 +255,11 @@ class MealsID(Resource):
         if meal id not does not exist, return -5, 404 
         '''
 
-        (b, w) = mealColl.findMealID(id)
+        (b, m) = mealColl.findMealID(id)
         if b:
-            return w, 200  # return the meal and HTTP 200 ok code
+            return m, 200  # return the meal and HTTP 200 ok code
         else:
-            return 0, 404  # return 0 for key and Not Found error code
+            return -5, 404  # return -5 for key and Not Found error code
 
     def put(self, id):
         """ Modifies a meal associated with a specific ID
