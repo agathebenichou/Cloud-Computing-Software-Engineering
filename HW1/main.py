@@ -1,5 +1,5 @@
 from model import Dishes, DishesID, DishesName, Meals, MealsID, MealsName
-from flask import Flask, request
+from flask import Flask
 from flask_restful import Api
 
 """ 
@@ -37,9 +37,6 @@ api.add_resource(MealsName, '/meals/<string:name>')
 
 if __name__ == '__main__':
 
-    # create collection dictionary and keys list
-    print("running rest-word-svr-v1.py")
-    # TODO - what to invoke?
-
+    print("running main.py")
     # run Flask app.   default part is 5000
-    app.run(host='0.0.0.0', port=8000, debug=True)
+    #app.run(host='0.0.0.0', port=8000, debug=True)

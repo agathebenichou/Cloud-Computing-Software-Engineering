@@ -18,10 +18,9 @@ class DishCollection:
         # self.dishes is a dictionary of the form {key:dish} where key is an integer and dish is a JSON object
         self.dishes = {}  # dishes in the collection
 
-    # COMPLETED
     def retrieveAllDishes(self):
         """
-        Retrieve all dicts containing dishes
+        Retrieve all dicts containing dishesinsertDish
         :return: dictionary of all dishes in the collection
         """
         print("DishCollection: retrieving all dishes:")
@@ -29,7 +28,6 @@ class DishCollection:
 
         return self.dishes
 
-    # COMPLETED
     def insertDish(self, dish_name):
         """
         Insert a new dish based on dish name
@@ -38,10 +36,11 @@ class DishCollection:
         """
 
         # Iterate over existing dishes collection and check if dish with same name already exists
+        print("Checking if dish already exists")
         for id, dish in self.dishes.items():
             if dish["name"] == dish_name: # If dish already exists, returns an error
                 print("DishCollection: dish ", dish_name, " already exists")
-                return None
+                return -2
 
         self.opNum += 1 # increment latest operation number
 
@@ -51,20 +50,36 @@ class DishCollection:
             response = requests.get(api_url, headers={'X-Api-Key': '6zoIr+IoEg7H2GQGVDxw+g==WdtcKEIt1DOIoGKj'})
 
             if response.status_code == requests.codes.ok: # Check status code of response
-                json_data = response.json()
-                for _dish in json_data:
+                dish_data = response.json()
+
+                # If dish not recognized by api/ninja
+                if not dish_data:
+                    print("Api Ninja/Nutrition does not recognize dish name:", dish_data)
+                    return -3
+
+                else:
+
+                    # Iterate over all dishes to accumulate components
+                    total_calories, total_sodium, total_sugar, total_serving_size = 0, 0, 0, 0
+                    for _dish in dish_data:
+                        total_calories += _dish["calories"]
+                        total_sodium += _dish["sodium_mg"]
+                        total_sugar += _dish["sugar_g"]
+                        total_serving_size += _dish["serving_size_g"]
+
+                    # Add dish to dish collection
                     self.dishes[self.opNum] = {
                         "name": dish_name,
                         "ID": self.opNum,
-                        "cal": _dish["calories"],
-                        "size": _dish["serving_size_g"],
-                        "sodium": _dish["sodium_mg"],
-                        "sugar": _dish["sugar_g"]
+                        "cal": round(total_calories, 0),
+                        "size": total_serving_size,
+                        "sodium": round(total_sodium, 0),
+                        "sugar": round(total_sugar, 0)
                     }
                     print(self.dishes)
-                print("DishCollection: dish ", dish_name, " was added")
+                    print("DishCollection: dish ", dish_name, " was added")
             else:
-                print("Error with Api Ninja/Nutrition:", response.status_code, response.text)
+                print(f"Api Ninja/Nutrition not reachable: {response.status_code}, {response.text}")
                 return -4
         except Exception as e:
             print(f"Api Ninja/Nutrition not reachable: {e}")
@@ -72,7 +87,6 @@ class DishCollection:
 
         return self.opNum
 
-    # COMPLETED
     def findDishID(self, id):
         """
         Return a single JSON object of the dish specified by its ID
@@ -84,22 +98,22 @@ class DishCollection:
             d = self.dishes[id]
             print("DishCollection: found dish ", d, " with id ", id)
             return True, d
-        else:
+        else: # the id does not exist in the collection
             print("DishCollection: did not find id", id)
-            return False, None  # the id does not exist in the collection
+            return False, None
 
-    # COMPLETED
     def delDishID(self, id):
 
         if id in self.dishes.keys():  # the key exists in collection
             d = self.dishes[id]
             del self.dishes[id]
             print("DishCollection: deleted dish ", d, " with id ", id)
-            return True, id
-        else:
-            return False, None  # the key does not exist in the collection
 
-    # COMPLETED
+            return True, id
+
+        else: # the key does not exist in the collection
+            return False, None
+
     def delDishName(self, name):
 
         id_to_delete = None
@@ -117,7 +131,6 @@ class DishCollection:
             print("DishCollection: did not find dish_name ", name)
             return False, None
 
-    # COMPLETED
     def findDishName(self, name):
         """
         Return a single JSON object of the dish specified by its name
@@ -137,6 +150,12 @@ class DishCollection:
         else:
             print("DishCollection: did not find dish_name ", name)
             return False, None  # the key does not exist in the collection
+
+    def checkDishes(self, list_of_ids):
+
+        exists = all(elem in list_of_ids for elem in self.dishes.keys())
+        print(f"All dishes exist: {exists}")
+        return exists
 
 
 class MealCollection:
@@ -167,8 +186,29 @@ class MealCollection:
 
         return self.meals
 
-    def insertMeal(self, meal_name, appetizer_id, main_id, dessert_id, disheColl):
+    def updateMeals(self, dish_id):
+        """ Given a dish_id, update the meals
 
+        :param dish_id: dish ID being deleted
+        """
+
+        for id, meal in self.meals.items():
+
+            delete_components = False
+            if dish_id == meal["appetizer"]:
+                meal["appetizer"] = None
+                delete_components = True
+            elif dish_id == meal["main"]:
+                meal["main"] = None
+                delete_components = True
+            elif dish_id["dessert"]:
+                dish_id["dessert"] = None
+                delete_components = True
+
+            if delete_components:
+                meal["cal"], meal["sodium"], meal["sugar"] = None, None, None
+
+    def insertMeal(self, meal_name, appetizer_id, main_id, dessert_id, disheColl):
         '''
         when user creates a meal, the program needs to compute the total calories, sodium, sugar by summing
         those components for all the individual dishes that make up the meal
@@ -178,10 +218,9 @@ class MealCollection:
         for id, meal in self.meals.items():
             if meal["name"] == meal_name: # If meal already exists, returns an error
                 print("MealCollection: meal ", meal_name, " already exists")
-                return 0
+                return -2
 
         self.opNum += 1  # increment latest operation number
-        key = self.opNum  # assign new key to new operation number
 
         self.meals[self.opNum] = {
             "name": meal_name,
@@ -191,7 +230,7 @@ class MealCollection:
             "dessert": dessert_id,
             "cal": sum(cal for cal in [disheColl.dishes[appetizer_id]["cal"], disheColl.dishes[main_id]["cal"], disheColl.dishes[dessert_id]["cal"]]),
             "sodium": sum(sodium for sodium in [disheColl.dishes[appetizer_id]["sodium"], disheColl.dishes[main_id]["sodium"], disheColl.dishes[dessert_id]["sodium"]]),
-            "suger": sum(sugar for sugar in [disheColl.dishes[appetizer_id]["sugar"], disheColl.dishes[main_id]["sugar"], disheColl.dishes[dessert_id]["sugar"]])
+            "sugar": sum(sugar for sugar in [disheColl.dishes[appetizer_id]["sugar"], disheColl.dishes[main_id]["sugar"], disheColl.dishes[dessert_id]["sugar"]])
         }
         print("MealCollection: meal ", meal_name, " was added")
 
@@ -220,7 +259,7 @@ class MealCollection:
 
         id_to_delete = None
         for id, meal in self.meals.items():
-            if meals["name"] == name:
+            if meal["name"] == name:
                 id_to_delete = id
                 break
 
@@ -233,7 +272,6 @@ class MealCollection:
             print("MealCollection: did not find meal_name ", name)
             return False, None
 
-
     def findMealName(self, name):
 
         """
@@ -244,7 +282,7 @@ class MealCollection:
 
         fetch_id = None
         for id, meal in self.meals.items():
-            if dish["name"] == name:
+            if meal["name"] == name:
                 fetch_id = id
                 break
 
@@ -255,12 +293,28 @@ class MealCollection:
             print("MealCollection: did not find meal_name ", name)
             return False, None  # the key does not exist in the collection
 
+    def replaceMeal(self, id, meal_name, appetizer_id, main_id, dessert_id, disheColl):
 
-    def replaceMeal(self, id, newMeal):
         if id in self.meals.keys():  # the key exists in collection
-            self.meals[id] = newMeal
-            print("MealCollection: New meal for id ", id, " is ", newMeal)
-            return True, newMeal
+
+            self.meals[id] = {
+                "name": meal_name,
+                "ID": id,
+                "appetizer": appetizer_id,
+                "main": main_id,
+                "dessert": dessert_id,
+                "cal": sum(cal for cal in [disheColl.dishes[appetizer_id]["cal"], disheColl.dishes[main_id]["cal"],
+                                           disheColl.dishes[dessert_id]["cal"]]),
+                "sodium": sum(sodium for sodium in
+                              [disheColl.dishes[appetizer_id]["sodium"], disheColl.dishes[main_id]["sodium"],
+                               disheColl.dishes[dessert_id]["sodium"]]),
+                "sugar": sum(sugar for sugar in
+                             [disheColl.dishes[appetizer_id]["sugar"], disheColl.dishes[main_id]["sugar"],
+                              disheColl.dishes[dessert_id]["sugar"]])
+            }
+            print("MealCollection: New meal for id ", id, " is ", self.meals[id])
+
+            return True, self.meals[id]
         else:  # the key does not exist in the collection
             print("MealCollection: did not find id", id)
             return False, None

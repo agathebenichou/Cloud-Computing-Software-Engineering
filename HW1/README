@@ -1,0 +1,2 @@
+docker build --tag meals .
+docker run -p 8000:8000 meals
