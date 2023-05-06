@@ -154,10 +154,9 @@ class DishCollection:
         :return: True or False depending on results
         """
 
-        exists = all(elem in list_of_ids for elem in self.dishes.keys())
+        exists = all(elem in self.dishes.keys() for elem in list_of_ids)
         print(f"All dishes exist: {exists}")
         return exists
-
 
 class MealCollection:
     """ MealCollection stores the dishes and performs operations on them
