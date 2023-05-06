@@ -1,6 +1,7 @@
 from flask_restful import Resource
 from collection import DishCollection, MealCollection
 from flask import request
+
 """
 The resources are:
 
@@ -12,7 +13,6 @@ The resources are:
 
 # create DishCollection instance with global scope
 dishColl = DishCollection()
-
 
 class Dishes(Resource):
     """
@@ -49,13 +49,12 @@ class Dishes(Resource):
                 print("Request Content-Type is not application/json")
                 return 0, 415
 
-        data = request.json
+        data = request.json # accept data as json
 
         # if body is not of type dict
         if type(data) != dict:
             return 0, 415
         else:
-
             # if name is empty or spelled wrong
             if 'name' not in data.keys():
                 return -1, 422
@@ -164,11 +163,8 @@ class DishesName(Resource):
         else: # return 0 for key and Not Found error code
             return -5, 404
 
-
-
 # create MealCollection instance with global scope
 mealColl = MealCollection()
-
 
 class Meals(Resource):
     """ The Meal class implements the REST operations for the /meals resource
@@ -191,16 +187,9 @@ class Meals(Resource):
 
     def post(self):
         """
-        Adds a meal to /meals
-        :param name: name used to add a meal, appetizer: appetizer dish ID, main: main dish ID, dessert: dessert dish ID
-        :return: id: ID given to the meal
+        Adds a meal to /meals given a JSON object with fields: name, appetizer, main, dessert
+        :return: id: ID given to the created meal
         """
-
-        '''
-        post will be a JSON object with fields: name, appetizer, main, dessert
-        Will parse JSON object and pass components using dishCollection
-        Passes Dish IDs, not names
-        '''
 
         # if request content-type is not application/json
         if 'Content-Type' not in dict(request.headers).keys():
@@ -242,7 +231,6 @@ class Meals(Resource):
 
         else:  # one of the dish IDs does not exist
             return -6, 422
-
 
 class MealsID(Resource):
     """ Implements the REST operations for the /meals/{ID} resource

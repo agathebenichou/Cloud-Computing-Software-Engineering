@@ -1,8 +1,5 @@
 import requests
 
-# todo - add documentation to each method
-
-
 class DishCollection:
     """ DishCollection stores the dishes and performs operations on them
         Each dish is stored in a dictionary with a unique numerical key called id,
@@ -11,16 +8,15 @@ class DishCollection:
     """
 
     def __init__(self):
-        # self.opNum is the number of insertDish operations performed so far.
-        # It will be used to generate unique keys to dishes inserted into the collection
+        # self.opNum is the number of insertDish operations performed
         self.opNum = 0
 
         # self.dishes is a dictionary of the form {key:dish} where key is an integer and dish is a JSON object
-        self.dishes = {}  # dishes in the collection
+        self.dishes = {}
 
     def retrieveAllDishes(self):
         """
-        Retrieve all dicts containing dishesinsertDish
+        Retrieve all dicts containing dishes insertDish
         :return: dictionary of all dishes in the collection
         """
         print("DishCollection: retrieving all dishes:")
@@ -108,7 +104,6 @@ class DishCollection:
             d = self.dishes[id]
             del self.dishes[id]
             print("DishCollection: deleted dish ", d, " with id ", id)
-
             return True, id
 
         else: # the key does not exist in the collection
@@ -152,6 +147,11 @@ class DishCollection:
             return False, None  # the key does not exist in the collection
 
     def checkDishes(self, list_of_ids):
+        """
+        Checks if all IDs in a list exist in dishes
+        :params: list of dish IDs
+        :return: True or False depending on results
+        """
 
         exists = all(elem in list_of_ids for elem in self.dishes.keys())
         print(f"All dishes exist: {exists}")
@@ -166,12 +166,11 @@ class MealCollection:
     """
 
     def __init__(self):
-        # self.opNum is the number of insertMeal operations performed so far.
-        # It will be used to generate unique keys to meals inserted into the collection
+        # self.opNum is the number of insertMeal operations performed
         self.opNum = 0
 
         # self.meals is a dictionary of the form {key:meal} where key is an integer and meal is a list JSON objects
-        self.meals = {}  # meals in the collection
+        self.meals = {}
 
 
     def retrieveAllMeals(self):
@@ -182,8 +181,6 @@ class MealCollection:
         print("MealCollection: retrieving all meals:")
         print(self.meals)
 
-        # todo - make sure this is indexed by ID
-
         return self.meals
 
     def updateMeals(self, dish_id):
@@ -192,9 +189,10 @@ class MealCollection:
         :param dish_id: dish ID being deleted
         """
 
-        for id, meal in self.meals.items():
-
+        for id, meal in self.meals.items(): # iterate over all dishes in a meal
             delete_components = False
+
+            # null out the dish ID that was deleted and associated with the meal
             if dish_id == meal["appetizer"]:
                 meal["appetizer"] = None
                 delete_components = True
@@ -205,24 +203,26 @@ class MealCollection:
                 dish_id["dessert"] = None
                 delete_components = True
 
-            if delete_components:
+            if delete_components: # if a dish ID was deleted, null out the components
                 meal["cal"], meal["sodium"], meal["sugar"] = None, None, None
 
     def insertMeal(self, meal_name, appetizer_id, main_id, dessert_id, disheColl):
-        '''
-        when user creates a meal, the program needs to compute the total calories, sodium, sugar by summing
-        those components for all the individual dishes that make up the meal
-        - if meal gets updated, then those components needs to be updated as well
-        '''
+        """"
+        Insert a meal given the name and the corresponding dish IDs. To create a meal, it
+        computes the total numebr of calories, sodium, sugar.
 
-        for id, meal in self.meals.items():
-            if meal["name"] == meal_name: # If meal already exists, returns an error
+        :param: meal name and component dish IDs
+        :returns: the ID of the created meal
+        """
+
+        for id, meal in self.meals.items(): # check if meal exists, if so - return an error
+            if meal["name"] == meal_name:
                 print("MealCollection: meal ", meal_name, " already exists")
                 return -2
 
         self.opNum += 1  # increment latest operation number
 
-        self.meals[self.opNum] = {
+        self.meals[self.opNum] = { # sum over all components
             "name": meal_name,
             "ID": self.opNum,
             "appetizer": appetizer_id,
@@ -237,6 +237,11 @@ class MealCollection:
         return self.opNum
 
     def delMealID(self, id):
+        """" Given a meal ID, delete it from the colleciton
+
+        :params: the ID of a meal to delete
+        :returns: True if successfully deleted, False if not found
+        """
 
         if id in self.meals.keys():  # the key exists in collection
             d = self.meals[id]
@@ -247,6 +252,11 @@ class MealCollection:
             return False, None  # the key does not exist in the collection
 
     def findMealID(self, id):
+        """ Given a meal ID, find the resulting collection
+
+        :params: the ID of the meal to find
+        :returns: True if found, False if not
+        """
         if id in self.meals.keys():  # the key exists in collection
             d = self.meals[id]
             print("MealCollection: found meal ", d, " with id ", id)
@@ -256,9 +266,14 @@ class MealCollection:
             return False, None  # the key does not exist in the collection
 
     def delMealName(self, name):
+        """ Given a meal name, delete the meal
+
+        :params: the name of the meal to delete
+        :returns: True if successfully deleted (and its ID), False if not
+        """
 
         id_to_delete = None
-        for id, meal in self.meals.items():
+        for id, meal in self.meals.items(): #search for the meal ID given the name
             if meal["name"] == name:
                 id_to_delete = id
                 break
@@ -273,7 +288,6 @@ class MealCollection:
             return False, None
 
     def findMealName(self, name):
-
         """
          Returns a single JSON object of the meal specified by its name
          param name: the name of the meal
@@ -281,7 +295,7 @@ class MealCollection:
          """
 
         fetch_id = None
-        for id, meal in self.meals.items():
+        for id, meal in self.meals.items(): #search for the meal ID given the name
             if meal["name"] == name:
                 fetch_id = id
                 break
@@ -294,9 +308,13 @@ class MealCollection:
             return False, None  # the key does not exist in the collection
 
     def replaceMeal(self, id, meal_name, appetizer_id, main_id, dessert_id, disheColl):
+        """ Given a meal ID, replaces the meal components with the new meal name and component IDs
+
+        :params: ID of meal to replace and new components (name and IDs)
+        :returns: True if updated, False if meal was not in collection
+        """
 
         if id in self.meals.keys():  # the key exists in collection
-
             self.meals[id] = {
                 "name": meal_name,
                 "ID": id,
@@ -315,6 +333,7 @@ class MealCollection:
             print("MealCollection: New meal for id ", id, " is ", self.meals[id])
 
             return True, self.meals[id]
+
         else:  # the key does not exist in the collection
             print("MealCollection: did not find id", id)
             return False, None
