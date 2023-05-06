@@ -38,8 +38,6 @@ class DishCollection:
                 print("DishCollection: dish ", dish_name, " already exists")
                 return -2
 
-        self.opNum += 1 # increment latest operation number
-
         try:
             # Query API Ninja /nutrition
             api_url = 'https://api.api-ninjas.com/v1/nutrition?query={}'.format(dish_name)
@@ -74,6 +72,9 @@ class DishCollection:
                     }
                     print(self.dishes)
                     print("DishCollection: dish ", dish_name, " was added")
+
+                    self.opNum += 1  # increment latest operation number
+
             else:
                 print(f"Api Ninja/Nutrition not reachable: {response.status_code}, {response.text}")
                 return -4
