@@ -9,7 +9,7 @@ class DishCollection:
 
     def __init__(self):
         # self.opNum is the number of insertDish operations performed
-        self.opNum = 0
+        self.opNum = 1
 
         # self.dishes is a dictionary of the form {key:dish} where key is an integer and dish is a JSON object
         self.dishes = {}
@@ -62,6 +62,8 @@ class DishCollection:
                         total_sugar += _dish["sugar_g"]
                         total_serving_size += _dish["serving_size_g"]
 
+                    self.opNum += 1  # increment latest operation number
+
                     # Add dish to dish collection
                     self.dishes[self.opNum] = {
                         "name": dish_name,
@@ -73,8 +75,6 @@ class DishCollection:
                     }
                     print(self.dishes)
                     print("DishCollection: dish ", dish_name, " was added")
-
-                    self.opNum += 1  # increment latest operation number
 
             else:
                 print(f"Api Ninja/Nutrition not reachable: {response.status_code}, {response.text}")

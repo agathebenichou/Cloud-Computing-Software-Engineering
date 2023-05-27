@@ -126,7 +126,7 @@ class Diets(Resource):
             else:
                 d = data['name']
 
-        id = dietColl.insertDish(d, data['cal'], data['sodium'], data['sugar'])  # add diet to collection
+        id = dietColl.insertDiet(d, data['cal'], data['sodium'], data['sugar'])  # add diet to collection
 
         return id, 201
 
