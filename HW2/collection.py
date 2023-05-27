@@ -9,7 +9,7 @@ class DishCollection:
 
     def __init__(self):
         # self.opNum is the number of insertDish operations performed
-        self.opNum = 1
+        self.opNum = 0
 
         # self.dishes is a dictionary of the form {key:dish} where key is an integer and dish is a JSON object
         self.dishes = {}

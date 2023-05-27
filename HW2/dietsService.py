@@ -42,7 +42,7 @@ class DietCollection:
 
         self.opNum += 1  # increment latest operation number
 
-        self.diet[self.opNum] = {
+        self.diets[self.opNum] = {
             "name": diet_name,
             "ID": self.opNum,
             "cal": cal,

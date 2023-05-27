@@ -187,7 +187,7 @@ class Meals(Resource):
 
         diet_name = request.args.get('diet')
         if diet_name:
-            diet_response = requests.get(f'http://diet-svc:5002/diets/{diet_name}') # should this be hostport 5002 or container port 8090?
+            diet_response = requests.get(f'http://diet-svc:8090/diets/{diet_name}') # should this be hostport 5002 or container port 8090?
             diet = diet_response.json()
             filtered_meals = []
             for meal in mealColl:
