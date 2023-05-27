@@ -1,4 +1,5 @@
 from model import Dishes, DishesID, DishesName, Meals, MealsID, MealsName
+from dietsService import Diets, DietsName
 from flask import Flask
 from flask_restful import Api
 
@@ -38,7 +39,7 @@ api.add_resource(MealsName, '/meals/<string:name>')
 api.add_resource(Diets, '/diets')
 
 # Associate the Resource /diets/name with the DietsName class
-api.add_resource(MealsName, '/diets/<string:name>')
+api.add_resource(DietsName, '/diets/<string:name>')
 
 
 if __name__ == '__main__':

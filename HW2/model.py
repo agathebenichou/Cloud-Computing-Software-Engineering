@@ -1,7 +1,7 @@
+import requests
+from flask import request
 from flask_restful import Resource
 from collection import DishCollection, MealCollection
-from flask import request
-import requests
 
 """
 The resources are:
