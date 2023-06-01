@@ -223,9 +223,6 @@ class Meals(Resource):
             keys = ['name', 'appetizer', 'main', 'dessert']
             all_present = all(elem in keys for elem in data.keys())
 
-            if not all_present:
-                print(f"One of the required parameters was not specified")
-                return -1, 422
             else:
                 meal_name = data['name']
                 appetizer_id = data['appetizer']
