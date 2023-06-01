@@ -68,10 +68,10 @@ class DishCollection:
                     self.dishes[self.opNum] = {
                         "name": dish_name,
                         "ID": self.opNum,
-                        "cal": round(total_calories, 0),
+                        "cal": total_calories,
                         "size": total_serving_size,
-                        "sodium": round(total_sodium, 0),
-                        "sugar": round(total_sugar, 0)
+                        "sodium": total_sodium,
+                        "sugar": total_sugar
                     }
                     print(self.dishes)
                     print("DishCollection: dish ", dish_name, " was added")
@@ -154,7 +154,8 @@ class DishCollection:
         :params: list of dish IDs
         :return: True or False depending on results
         """
-
+        print(f"Dishes that exist: {self.dishes.keys()}")
+        print(f"Dishes ID needed to create: {list_of_ids}")
         exists = all(elem in self.dishes.keys() for elem in list_of_ids)
         print(f"All dishes exist: {exists}")
         return exists
@@ -249,7 +250,7 @@ class MealCollection:
             d = self.meals[id]
             del self.meals[id]
             print("MealCollection: deleted meal ", d, " with id ", id)
-            return True, d
+            return True, id
         else:
             return False, None  # the key does not exist in the collection
 

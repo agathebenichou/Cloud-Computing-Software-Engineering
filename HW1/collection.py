@@ -65,10 +65,10 @@ class DishCollection:
                     self.dishes[self.opNum] = {
                         "name": dish_name,
                         "ID": self.opNum,
-                        "cal": round(total_calories, 0),
+                        "cal": total_calories,
                         "size": total_serving_size,
-                        "sodium": round(total_sodium, 0),
-                        "sugar": round(total_sugar, 0)
+                        "sodium": total_sodium,
+                        "sugar": total_sugar
                     }
                     print(self.dishes)
                     print("DishCollection: dish ", dish_name, " was added")

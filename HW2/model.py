@@ -82,7 +82,6 @@ class Dishes(Resource):
 
         return "This method is not allowed for request URL", 405
 
-
 class DishesID(Resource):
     """ Implements the REST operations for the /dishes/{ID} resource
 
@@ -123,7 +122,6 @@ class DishesID(Resource):
             return dish_id, 200
         else: # return 0 for id value (error) and Not Found error code
             return -5, 404
-
 
 class DishesName(Resource):
     """ Implements the REST operations for the /dishes/{name} resource
@@ -221,7 +219,7 @@ class Meals(Resource):
 
             # not all keys are present
             keys = ['name', 'appetizer', 'main', 'dessert']
-            all_present = all(elem in keys for elem in data.keys())
+            all_present = all(elem in data.keys() for elem in keys)
 
             if not all_present:
                 print(f"One of the required parameters was not specified")
@@ -264,9 +262,9 @@ class MealsID(Resource):
         """
         b, w = mealColl.delMealID(id)
         if b:
-            return w, 200  # return deleted meal and HTTP 200 ok code
+            return w, 200  # return deleted meal ID and HTTP 200 ok code
         else:
-            return 5, 404  # return 0 for key value (error) and Not Found error code
+            return -5, 404  # if not found
 
     def get(self, id):
         """
@@ -330,7 +328,6 @@ class MealsID(Resource):
 
         else:  # one of the dish IDs does not exist
             return -6, 422
-
 
 class MealsName(Resource):
     """ Implements the REST operations for the /meals/{name} resource
