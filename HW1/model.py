@@ -9,6 +9,7 @@ The resources are:
 - /meals/{ID} or /meals/{name}      Each meal resource is expressed with a specific JSON object
 - /dishes                           This is a collection class, containing all the dishes 
 - /dishes/{ID} or /dishes/{name}    Each dish resource is expressed with a specific JSON object
+- /diets or /diets{name}            Each diet resource is expressed with a specific JSON object
 """
 
 # create DishCollection instance with global scope

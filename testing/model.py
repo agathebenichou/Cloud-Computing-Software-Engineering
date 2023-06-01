@@ -1,7 +1,6 @@
-import requests
-from flask import request
 from flask_restful import Resource
 from collection import DishCollection, MealCollection
+from flask import request
 
 """
 The resources are:
@@ -10,7 +9,6 @@ The resources are:
 - /meals/{ID} or /meals/{name}      Each meal resource is expressed with a specific JSON object
 - /dishes                           This is a collection class, containing all the dishes 
 - /dishes/{ID} or /dishes/{name}    Each dish resource is expressed with a specific JSON object
-- /diets or /diets{name}            Each diet resource is expressed with a specific JSON object
 """
 
 # create DishCollection instance with global scope
@@ -34,7 +32,6 @@ class Dishes(Resource):
         """
 
         return dishColl.retrieveAllDishes(), 200
-
 
     def post(self):
         """
@@ -82,6 +79,7 @@ class Dishes(Resource):
 
         return "This method is not allowed for request URL", 405
 
+
 class DishesID(Resource):
     """ Implements the REST operations for the /dishes/{ID} resource
 
@@ -122,6 +120,7 @@ class DishesID(Resource):
             return dish_id, 200
         else: # return 0 for id value (error) and Not Found error code
             return -5, 404
+
 
 class DishesName(Resource):
     """ Implements the REST operations for the /dishes/{name} resource
@@ -169,6 +168,7 @@ mealColl = MealCollection()
 
 class Meals(Resource):
     """ The Meal class implements the REST operations for the /meals resource
+
     /meals
         POST (add a meal of the given name)
         GET (return the JSON object listing all meals, indexed by ID)
@@ -178,22 +178,12 @@ class Meals(Resource):
     global mealColl
 
     def get(self):
-        """ Retrieves meals from the collection:
-        If query is specified - return all meals corresponding to that diet
-        Otherwise - return all meals
+        """ Retrieves a specific meal from the collection
+
+        :return: all meal objects and status code
         """
 
-        diet_name = request.args.get('diet')
-        if diet_name:
-            diet_response = requests.get(f'http://diet-svc:8090/diets/{diet_name}') # should this be hostport 5002 or container port 8090?
-            diet = diet_response.json()
-            filtered_meals = []
-            for meal in mealColl:
-                if (meal['cal'] <= diet['cal'] and meal['sodiem'] <= diet['sodiem'] and meal['sugar'] <= diet['sugar']):
-                    filtered_meals.append(meal)
-            return filtered_meals, 200
-        else:
-            return mealColl.retrieveAllMeals(), 200
+        return mealColl.retrieveAllMeals(), 200
 
     def post(self):
         """
@@ -219,8 +209,11 @@ class Meals(Resource):
 
             # not all keys are present
             keys = ['name', 'appetizer', 'main', 'dessert']
-            all_present = all(elem in data.keys() for elem in keys)
+            all_present = all(elem in keys for elem in data.keys())
 
+            if not all_present:
+                print(f"One of the required parameters was not specified")
+                return -1, 422
             else:
                 meal_name = data['name']
                 appetizer_id = data['appetizer']
@@ -259,9 +252,9 @@ class MealsID(Resource):
         """
         b, w = mealColl.delMealID(id)
         if b:
-            return w, 200  # return deleted meal ID and HTTP 200 ok code
+            return w, 200  # return deleted meal and HTTP 200 ok code
         else:
-            return -5, 404  # if not found
+            return 5, 404  # return 0 for key value (error) and Not Found error code
 
     def get(self, id):
         """
@@ -325,6 +318,7 @@ class MealsID(Resource):
 
         else:  # one of the dish IDs does not exist
             return -6, 422
+
 
 class MealsName(Resource):
     """ Implements the REST operations for the /meals/{name} resource

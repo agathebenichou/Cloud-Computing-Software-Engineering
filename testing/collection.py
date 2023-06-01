@@ -65,10 +65,10 @@ class DishCollection:
                     self.dishes[self.opNum] = {
                         "name": dish_name,
                         "ID": self.opNum,
-                        "cal": total_calories,
+                        "cal": round(total_calories, 0),
                         "size": total_serving_size,
-                        "sodium": total_sodium,
-                        "sugar": total_sugar
+                        "sodium": round(total_sodium, 0),
+                        "sugar": round(total_sugar, 0)
                     }
                     print(self.dishes)
                     print("DishCollection: dish ", dish_name, " was added")
@@ -157,6 +157,7 @@ class DishCollection:
         exists = all(elem in self.dishes.keys() for elem in list_of_ids)
         print(f"All dishes exist: {exists}")
         return exists
+
 
 class MealCollection:
     """ MealCollection stores the dishes and performs operations on them
