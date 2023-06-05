@@ -11,5 +11,6 @@ COPY model.py .
 COPY collection.py .
 
 ENV FLASK_APP=main.py
+ENV FLASK_RUN_HOST=0.0.0.0
 ENV FLASK_RUN_PORT=5002
-CMD ["flask", "run", "--host=0.0.0.0"]
+CMD ["flask", "run"]
