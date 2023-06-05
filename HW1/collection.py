@@ -169,22 +169,22 @@ class MealCollection:
         # self.opNum is the number of insertMeal operations performed
         self.opNum = 0
 
-        # self.meals is a dictionary of the form {key:meal} where key is an integer and meal is a list JSON objects
+        # self.old is a dictionary of the form {key:meal} where key is an integer and meal is a list JSON objects
         self.meals = {}
 
 
     def retrieveAllMeals(self):
         """
-        Retrieve all dicts containing meals
-        :return: dictionary of all meals in the collection
+        Retrieve all dicts containing old
+        :return: dictionary of all old in the collection
         """
-        print("MealCollection: retrieving all meals:")
+        print("MealCollection: retrieving all old:")
         print(self.meals)
 
         return self.meals
 
     def updateMeals(self, dish_id):
-        """ Given a dish_id, update the meals
+        """ Given a dish_id, update the old
 
         :param dish_id: dish ID being deleted
         """

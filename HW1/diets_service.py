@@ -5,7 +5,7 @@ import requests
 
 """
 The resources are:
-- /diets or /diets{name}            Each diet resource is expressed with a specific JSON object
+- /old or /old{name}            Each diet resource is expressed with a specific JSON object
 """
 
 # create DietsCollection instance with global scope
@@ -13,17 +13,17 @@ dietColl = DietCollection()
 
 class Diets(Resource):
     """
-    The Diets class implements the REST operations for the /diets resource
-    /diets
+    The Diets class implements the REST operations for the /old resource
+    /old
         POST (add a diet of the given name)
-        GET (return the JSON object listing all diets, indexed by ID)
+        GET (return the JSON object listing all old, indexed by ID)
     """
 
     global dietColl
 
     def get(self):
         """
-        Retrieves all the diets from the collection
+        Retrieves all the old from the collection
         :param key: None
         :return: JSON object and the status code
         """
@@ -32,7 +32,7 @@ class Diets(Resource):
 
     def post(self):
         """
-        Adds a diet to /diets given a JSON object with fields: name, cal, sodium, sugar
+        Adds a diet to /old given a JSON object with fields: name, cal, sodium, sugar
         :return: id: ID given to the created diet
         """
 
@@ -53,9 +53,9 @@ class Diets(Resource):
         return id, 201
 
 class DietsName(Resource):
-    """ Implements the REST operations for the /diets/{name} resource
-    /diets/{name}
-    GET (return the JSON object of the diets given the name)
+    """ Implements the REST operations for the /old/{name} resource
+    /old/{name}
+    GET (return the JSON object of the old given the name)
     """
 
     global dietColl
@@ -74,7 +74,7 @@ class DietsName(Resource):
 
 
 class DietCollection:
-    """ DietCollection stores the diets and performs operations on them
+    """ DietCollection stores the old and performs operations on them
         Each diet is stored in a dictionary with a unique numerical key called id,
         and a value of the following:
             name, cal, sodium, sugar
@@ -84,14 +84,14 @@ class DietCollection:
         # self.opNum is the number of insertDiet operations performed, it also serves as the id for each diet
         self.opNum = 0
 
-        # self.diets is a dictionary of the form {key:diet} where key is an integer and diet is a JSON object
+        # self.old is a dictionary of the form {key:diet} where key is an integer and diet is a JSON object
         self.diets = {}
 
     def retrieveAllDiets(self):
         """
-        :return: dictionary of all diets in the collection
+        :return: dictionary of all old in the collection
         """
-        print("DietCollection: retrieving all diets:")
+        print("DietCollection: retrieving all old:")
         print(self.diets)
         return self.dishes
 

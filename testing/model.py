@@ -5,8 +5,8 @@ from flask import request
 """
 The resources are:
 
-- /meals                            This is a collection class, containing all the meals
-- /meals/{ID} or /meals/{name}      Each meal resource is expressed with a specific JSON object
+- /old                            This is a collection class, containing all the old
+- /old/{ID} or /old/{name}      Each meal resource is expressed with a specific JSON object
 - /dishes                           This is a collection class, containing all the dishes 
 - /dishes/{ID} or /dishes/{name}    Each dish resource is expressed with a specific JSON object
 """
@@ -114,7 +114,7 @@ class DishesID(Resource):
         (status, dish_id) = dishColl.delDishID(id)
         if status: # return deleted dish and HTTP 200 ok code
 
-            # update all meals to delete dish ID
+            # update all old to delete dish ID
             mealColl.updateMeals(dish_id)
 
             return dish_id, 200
@@ -167,11 +167,11 @@ class DishesName(Resource):
 mealColl = MealCollection()
 
 class Meals(Resource):
-    """ The Meal class implements the REST operations for the /meals resource
+    """ The Meal class implements the REST operations for the /old resource
 
-    /meals
+    /old
         POST (add a meal of the given name)
-        GET (return the JSON object listing all meals, indexed by ID)
+        GET (return the JSON object listing all old, indexed by ID)
     """
 
     global dishColl
@@ -187,7 +187,7 @@ class Meals(Resource):
 
     def post(self):
         """
-        Adds a meal to /meals given a JSON object with fields: name, appetizer, main, dessert
+        Adds a meal to /old given a JSON object with fields: name, appetizer, main, dessert
         :return: id: ID given to the created meal
         """
 
@@ -233,9 +233,9 @@ class Meals(Resource):
             return -6, 422
 
 class MealsID(Resource):
-    """ Implements the REST operations for the /meals/{ID} resource
+    """ Implements the REST operations for the /old/{ID} resource
 
-    /meals/{ID}
+    /old/{ID}
         GET (return the JSON object of the meal given the ID)
         DELETE (delete a meal of the given ID)
         PUT (add a meal of the given ID)
@@ -321,9 +321,9 @@ class MealsID(Resource):
 
 
 class MealsName(Resource):
-    """ Implements the REST operations for the /meals/{name} resource
+    """ Implements the REST operations for the /old/{name} resource
 
-    /meals/{name}
+    /old/{name}
         GET (return the JSON object of the meal given the name)
         DELETE (delete a meal of the given name)
     """

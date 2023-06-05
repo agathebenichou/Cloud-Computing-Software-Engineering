@@ -1,0 +1,30 @@
+version: '1'
+
+services:
+  diet-service:
+    build:
+      context: ./diets
+      dockerfile: Dockerfile-diet
+    volumes:
+      - type: bind
+        source: ./app         # host directory
+        target: /app          # container directory
+    environment:
+      FLASK_DEBUG: "true"     # tells flask run to run in development mode and reload the code on change. This mode should only be used in development.
+    ports:
+      - "5002:80"  # host:container
+
+  dish_meal-service:
+    build:
+      context: ./app
+      dockerfile: Dockerfile-dish_meal
+    volumes:
+      - type: bind
+        source: ./app
+        target: /app
+    environment:
+      FLASK_DEBUG: "true"
+    ports:
+      - "5001:80"  # host:container
+    depends_on:
+        - diet-service    # some dish_meal service methods will not work unless diet-service is running

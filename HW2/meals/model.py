@@ -1,16 +1,16 @@
 import requests
 from flask import request
 from flask_restful import Resource
-from collection import DishCollection, MealCollection
+from .collection import DishCollection, MealCollection
 
 """
 The resources are:
 
-- /meals                            This is a collection class, containing all the meals
-- /meals/{ID} or /meals/{name}      Each meal resource is expressed with a specific JSON object
+- /old                            This is a collection class, containing all the old
+- /old/{ID} or /old/{name}      Each meal resource is expressed with a specific JSON object
 - /dishes                           This is a collection class, containing all the dishes 
 - /dishes/{ID} or /dishes/{name}    Each dish resource is expressed with a specific JSON object
-- /diets or /diets{name}            Each diet resource is expressed with a specific JSON object
+- /old or /old{name}            Each diet resource is expressed with a specific JSON object
 """
 
 # create DishCollection instance with global scope
@@ -116,7 +116,7 @@ class DishesID(Resource):
         (status, dish_id) = dishColl.delDishID(id)
         if status: # return deleted dish and HTTP 200 ok code
 
-            # update all meals to delete dish ID
+            # update all old to delete dish ID
             mealColl.updateMeals(dish_id)
 
             return dish_id, 200
@@ -168,36 +168,54 @@ class DishesName(Resource):
 mealColl = MealCollection()
 
 class Meals(Resource):
-    """ The Meal class implements the REST operations for the /meals resource
-    /meals
+    """ The Meal class implements the REST operations for the /old resource
+    /old
         POST (add a meal of the given name)
-        GET (return the JSON object listing all meals, indexed by ID)
+        GET (return the JSON object listing all old, indexed by ID)
     """
 
     global dishColl
     global mealColl
 
     def get(self):
-        """ Retrieves meals from the collection:
-        If query is specified - return all meals corresponding to that diet
-        Otherwise - return all meals
+        """ Retrieves old from the collection:
+        If query is specified - return all old corresponding to that diet
+        Otherwise - return all old
         """
 
         diet_name = request.args.get('diet')
         if diet_name:
-            diet_response = requests.get(f'http://diet-svc:8090/diets/{diet_name}') # should this be hostport 5002 or container port 8090?
-            diet = diet_response.json()
-            filtered_meals = []
-            for meal in mealColl:
-                if (meal['cal'] <= diet['cal'] and meal['sodiem'] <= diet['sodiem'] and meal['sugar'] <= diet['sugar']):
-                    filtered_meals.append(meal)
-            return filtered_meals, 200
+            # TODO - invoke a get on the diet service
+            print(f"searching for diet name {diet_name}")
+
+            # Define diets url with diet name
+            diets_service_url = f"http://diets-service:5002/diets/{diet_name}"
+
+            # Send GET request to diets service
+            diet_response = requests.get(diets_service_url)
+
+            # If the diet exists, extract and filter for meals
+            if diet_response.status_code == 200:
+
+                diet = diet_response.json()
+                filtered_meals = []
+                for meal in mealColl.meals:
+                    if (meal['cal'] <= diet['cal'] and meal['sodium'] <= diet['sodium'] and meal['sugar'] <= diet[
+                        'sugar']):
+                        filtered_meals.append(meal)
+                return filtered_meals, 200
+
+            # No diet of that name exists
+            else:
+                return f"Diet {diet_name} not found", 404
+
+        # Return all meals if no diet was specified
         else:
             return mealColl.retrieveAllMeals(), 200
 
     def post(self):
         """
-        Adds a meal to /meals given a JSON object with fields: name, appetizer, main, dessert
+        Adds a meal to /old given a JSON object with fields: name, appetizer, main, dessert
         :return: id: ID given to the created meal
         """
 
@@ -221,7 +239,7 @@ class Meals(Resource):
             keys = ['name', 'appetizer', 'main', 'dessert']
             all_present = all(elem in data.keys() for elem in keys)
 
-            else:
+            if all_present:
                 meal_name = data['name']
                 appetizer_id = data['appetizer']
                 main_id = data['main']
@@ -240,9 +258,9 @@ class Meals(Resource):
             return -6, 422
 
 class MealsID(Resource):
-    """ Implements the REST operations for the /meals/{ID} resource
+    """ Implements the REST operations for the /old/{ID} resource
 
-    /meals/{ID}
+    /old/{ID}
         GET (return the JSON object of the meal given the ID)
         DELETE (delete a meal of the given ID)
         PUT (add a meal of the given ID)
@@ -327,9 +345,9 @@ class MealsID(Resource):
             return -6, 422
 
 class MealsName(Resource):
-    """ Implements the REST operations for the /meals/{name} resource
+    """ Implements the REST operations for the /old/{name} resource
 
-    /meals/{name}
+    /old/{name}
         GET (return the JSON object of the meal given the name)
         DELETE (delete a meal of the given name)
     """
