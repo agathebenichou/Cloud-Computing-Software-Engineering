@@ -4,8 +4,8 @@ from .collection import DietCollection
 
 """
 The resources are:
-- /old                This is a collection class, containing all the old
-- /old/{name}         Each diet resoruce is expressed with a specific JSON object
+- /diets                This is a collection class, containing all the old
+- /diets/{name}         Each diet resoruce is expressed with a specific JSON object
 """
 
 # create DietsCollection instance with global scope
@@ -13,17 +13,17 @@ dietColl = DietCollection()
 
 class Diets(Resource):
     """
-    The Diets class implements the REST operations for the /old resource
-    /old
+    The Diets class implements the REST operations for the /diets resource
+    /diets
         POST (add a diet of the given name)
-        GET (return the JSON object listing all old, indexed by ID)
+        GET (return the JSON object listing all diets, indexed by ID)
     """
 
     global dietColl
 
     def get(self):
         """
-        Retrieves all the old from the collection
+        Retrieves all the diets from the collection
         :param key: None
         :return: JSON object and the status code
         """
@@ -32,7 +32,7 @@ class Diets(Resource):
 
     def post(self):
         """
-        Adds a diet to /old given a JSON object with fields: name, cal, sodium, sugar
+        Adds a diet to /diets given a JSON object with fields: name, cal, sodium, sugar
         :return: id: ID given to the created diet
         """
         # if request content-type is not application/json
@@ -62,9 +62,9 @@ class Diets(Resource):
         return f"Diet {d} was created successfully", 201
 
 class DietsName(Resource):
-    """ Implements the REST operations for the /old/{name} resource
-    /old/{name}
-    GET (return the JSON object of the old given the name)
+    """ Implements the REST operations for the /diets/{name} resource
+    /diets/{name}
+    GET (return the JSON object of the diets given the name)
     """
 
     global dietColl
