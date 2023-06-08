@@ -1,5 +1,4 @@
-from meals.model import Dishes, DishesID, DishesName, Meals, MealsID, MealsName
-from diets.model import Diets, DietsName
+from .model import Dishes, DishesID, DishesName, Meals, MealsID, MealsName
 from flask import Flask
 from flask_restful import Api
 

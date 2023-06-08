@@ -5,7 +5,7 @@ from .collection import DietCollection
 """
 The resources are:
 - /diets                This is a collection class, containing all the old
-- /diets/{name}         Each diet resoruce is expressed with a specific JSON object
+- /diets/{name}         Each diet resource is expressed with a specific JSON object
 """
 
 # create DietsCollection instance with global scope

@@ -1,4 +1,4 @@
-from model import Diets, DietsName
+from .model import Diets, DietsName
 from flask import Flask
 from flask_restful import Api
 
