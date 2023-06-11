@@ -6,19 +6,19 @@ from .collection import DishCollection, MealCollection
 """
 The resources are:
 
-- /old                            This is a collection class, containing all the old
-- /old/{ID} or /old/{name}      Each meal resource is expressed with a specific JSON object
+- /meals                            This is a collection class, containing all the meals
+- /meals/{ID} or /meals/{name}      Each meal resource is expressed with a specific JSON object
 - /dishes                           This is a collection class, containing all the dishes 
 - /dishes/{ID} or /dishes/{name}    Each dish resource is expressed with a specific JSON object
-- /old or /old{name}            Each diet resource is expressed with a specific JSON object
+- /diets or /diets/{name}            Each diet resource is expressed with a specific JSON object
 """
 
 # create DishCollection instance with global scope
 dishColl = DishCollection()
 
+
 class Dishes(Resource):
-    """
-    The Dishes class implements the REST operations for the /dishes resource
+    """ The Dishes class implements the REST operations for the /dishes resource
     /dishes
         POST (add a dish of the given name)
         GET (return the JSON object listing all dishes, indexed by ID)
@@ -76,11 +76,11 @@ class Dishes(Resource):
 
     def delete(self):
         """ Deleting the entire collection is not allowed
-
         :return: return error message
         """
 
         return "This method is not allowed for request URL", 405
+
 
 class DishesID(Resource):
     """ Implements the REST operations for the /dishes/{ID} resource
@@ -116,12 +116,13 @@ class DishesID(Resource):
         (status, dish_id) = dishColl.delDishID(id)
         if status: # return deleted dish and HTTP 200 ok code
 
-            # update all old to delete dish ID
+            # update all meals to delete dish ID
             mealColl.updateMeals(dish_id)
 
             return dish_id, 200
         else: # return 0 for id value (error) and Not Found error code
             return -5, 404
+
 
 class DishesName(Resource):
     """ Implements the REST operations for the /dishes/{name} resource
@@ -164,23 +165,25 @@ class DishesName(Resource):
         else: # return 0 for key and Not Found error code
             return -5, 404
 
+
 # create MealCollection instance with global scope
 mealColl = MealCollection()
 
+
 class Meals(Resource):
-    """ The Meal class implements the REST operations for the /old resource
-    /old
+    """ The Meal class implements the REST operations for the /meals resource
+    /meals
         POST (add a meal of the given name)
-        GET (return the JSON object listing all old, indexed by ID)
+        GET (return the JSON object listing all meals, indexed by ID)
     """
 
     global dishColl
     global mealColl
 
     def get(self):
-        """ Retrieves old from the collection:
-        If query is specified - return all old corresponding to that diet
-        Otherwise - return all old
+        """ Retrieves meals from the collection:
+        If query is specified - return all meals corresponding to that diet
+        Otherwise - return all meals
         """
 
         diet_name = request.args.get('diet')
@@ -215,7 +218,7 @@ class Meals(Resource):
 
     def post(self):
         """
-        Adds a meal to /old given a JSON object with fields: name, appetizer, main, dessert
+        Adds a meal to /meals given a JSON object with fields: name, appetizer, main, dessert
         :return: id: ID given to the created meal
         """
 
@@ -244,6 +247,8 @@ class Meals(Resource):
                 appetizer_id = data['appetizer']
                 main_id = data['main']
                 dessert_id = data['dessert']
+            else:
+                return -1, 422
 
         dishes_exists = dishColl.checkDishes([appetizer_id, main_id, dessert_id])
         if dishes_exists:
@@ -257,10 +262,11 @@ class Meals(Resource):
         else:  # one of the dish IDs does not exist
             return -6, 422
 
-class MealsID(Resource):
-    """ Implements the REST operations for the /old/{ID} resource
 
-    /old/{ID}
+class MealsID(Resource):
+    """ Implements the REST operations for the /meals/{ID} resource
+
+    /meals/{ID}
         GET (return the JSON object of the meal given the ID)
         DELETE (delete a meal of the given ID)
         PUT (add a meal of the given ID)
@@ -344,10 +350,11 @@ class MealsID(Resource):
         else:  # one of the dish IDs does not exist
             return -6, 422
 
-class MealsName(Resource):
-    """ Implements the REST operations for the /old/{name} resource
 
-    /old/{name}
+class MealsName(Resource):
+    """ Implements the REST operations for the /meals/{name} resource
+
+    /meals/{name}
         GET (return the JSON object of the meal given the name)
         DELETE (delete a meal of the given name)
     """

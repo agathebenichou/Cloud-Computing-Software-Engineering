@@ -18,14 +18,14 @@ api.add_resource(DishesID, '/dishes/<int:id>')
 # Associate the Resource /dishes/ID with the DishesName class
 api.add_resource(DishesName, '/dishes/<string:name>')
 
-# Associate the Resource /old with the Meals class
+# Associate the Resource /meals with the Meals class
 api.add_resource(Meals, '/meals')
 
-# Associate the Resource /meal/ID with the MealsID class
-api.add_resource(MealsID, '/meal/<int:id>')
+# Associate the Resource /meals/ID with the MealsID class
+api.add_resource(MealsID, '/meals/<int:id>')
 
-# Associate the Resource /meal/name with the MealsName class
-api.add_resource(MealsName, '/meal/<string:name>')
+# Associate the Resource /meals/name with the MealsName class
+api.add_resource(MealsName, '/meals/<string:name>')
 
 # Associate the Resource /diets with the Diet Class
 api.add_resource(Diets, '/diets')
