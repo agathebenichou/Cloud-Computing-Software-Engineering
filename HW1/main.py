@@ -34,12 +34,6 @@ api.add_resource(MealsID, '/old/<int:id>')
 # Associate the Resource /old/ID with the MealsName class
 api.add_resource(MealsName, '/old/<string:name>')
 
-# Associate the Resource /old with the Diet Class
-api.add_resource(Diets, '/old')
-
-# Associate the Resource /old/name with the DietsName class
-api.add_resource(MealsName, '/old/<string:name>')
-
 
 if __name__ == '__main__':
 
