@@ -27,3 +27,11 @@ services:
       - "5002:80"  # host:container
 #    expose:
 #      - 80
+
+  reverse:
+    build: ./reverse
+    ports:
+      - "80:80"
+    depends_on:
+      - meals-service
+      - diet-service
