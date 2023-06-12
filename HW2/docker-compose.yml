@@ -11,9 +11,7 @@ services:
     environment:
       FLASK_DEBUG: "true"
     ports:
-      - "5001:80"  # host:container
-#    expose:
-#      - 80
+      - "5001:5001"  # host:container
 
   diet-service:
     build: ./diets
@@ -24,9 +22,7 @@ services:
     environment:
       FLASK_DEBUG: "true"
     ports:
-      - "5002:80"  # host:container
-#    expose:
-#      - 80
+      - "5002:5002"  # host:container
 
   reverse:
     build: ./reverse
