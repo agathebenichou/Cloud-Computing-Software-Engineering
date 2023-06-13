@@ -35,3 +35,13 @@ services:
     depends_on:
       - meals-service
       - diet-service
+
+#  mongo:
+#    image: mongo
+#    ports:
+#      - "27017:27017" # In daniels example mapping is without quotes
+#    volumes:
+#      - mongo_data:/data/db
+#
+#volumes:
+#  mongo_data:
