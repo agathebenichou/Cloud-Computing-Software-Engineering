@@ -5,10 +5,7 @@ class DietCollection:
     """
 
     def __init__(self):
-        # self.opNum is the number of insertDiet operations performed, it also serves as the id for each diet
         self.opNum = 0
-
-        # self.old is a dictionary of the form {key:diet} where key is an integer and diet is a JSON object
         self.diets = {}
 
     def retrieveAllDiets(self):

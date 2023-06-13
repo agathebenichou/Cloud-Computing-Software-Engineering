@@ -12,5 +12,7 @@ COPY collection.py .
 
 ENV FLASK_APP=main.py
 ENV FLASK_RUN_HOST=0.0.0.0
-ENV FLASK_RUN_PORT=5002
+ENV FLASK_RUN_PORT=80
+EXPOSE 80
+
 CMD ["flask", "run"]

@@ -79,7 +79,7 @@ class Dishes(Resource):
         :return: return error message
         """
 
-        return "This method is not allowed for request URL", 405
+        return "This method is not allowed for the requested URL", 405
 
 
 class DishesID(Resource):
@@ -188,7 +188,7 @@ class Meals(Resource):
 
         diet_name = request.args.get('diet')
         if diet_name:
-            # TODO - invoke a get on the diet service
+
             print(f"searching for diet name {diet_name}")
 
             # Define diets url with diet name
