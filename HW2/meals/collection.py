@@ -1,4 +1,9 @@
 import requests
+#import pymongo
+import sys
+
+# Initialize Mongo client
+#mongo_client = pymongo.MongoClient("mongodb://mongo:27017/")
 
 class DishCollection:
     """ DishCollection stores the dishes and performs operations on them
@@ -10,6 +15,20 @@ class DishCollection:
         self.opNum = 0
         self.dishes = []
 
+        # # Extract dishes database
+        # dishes_db = mongo_client["dishesdb"]
+        #
+        # # Extract dishes collection
+        # self.dishes_coll = dishes_db["dishes"]
+
+        # check if this is the first time starting up; i.e., do we already have a record with _id == 0 in the collection or not.
+        # If it does, do nothing.  if not, initialize
+        # if self.dishes_coll.find_one({"_id": 0}) is None:  # first time starting up this service as no document with _id ==0 exists
+        #     # insert a document into the database to have one "_id" index that starts at 0 and a field named "cur_key"
+        #     self.dishes_coll.insert_one({"_id": 0, "cur_key": 0})
+        #     print("Inserted dish containing cur_key with _id == 0 into the collection")
+        #     sys.stdout.flush()
+
     def retrieveAllDishes(self):
         """
         Retrieve all dicts containing dishes insertDish
@@ -18,6 +37,8 @@ class DishCollection:
         print("DishCollection: retrieving all dishes:")
         dishes_list = [dish for dish in self.dishes]
         print(dishes_list)
+
+        #cursor = self.dishes_coll.find({"_id": {"$gte": 1}})
 
         return dishes_list
 
