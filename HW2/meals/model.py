@@ -192,7 +192,7 @@ class Meals(Resource):
             print(f"searching for diet name {diet_name}")
 
             # Define diets url with diet name
-            diets_service_url = f"http://diets-service:5002/diets/{diet_name}"
+            diets_service_url = f"http://diet-service:5002/diets/{diet_name}"
 
             # Send GET request to diets service
             diet_response = requests.get(diets_service_url)
@@ -203,8 +203,7 @@ class Meals(Resource):
                 diet = diet_response.json()
                 filtered_meals = []
                 for meal in mealColl.meals:
-                    if (meal['cal'] <= diet['cal'] and meal['sodium'] <= diet['sodium'] and meal['sugar'] <= diet[
-                        'sugar']):
+                    if (meal['cal'] <= diet['cal'] and meal['sodium'] <= diet['sodium'] and meal['sugar'] <= diet['sugar']):
                         filtered_meals.append(meal)
                 return filtered_meals, 200
 
