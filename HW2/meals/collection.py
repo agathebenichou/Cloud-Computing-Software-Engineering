@@ -1,9 +1,6 @@
 import requests
-# import pymongo
-import sys
+import pymongo
 
-# Initialize Mongo client
-#mongo_client = pymongo.MongoClient("mongodb://mongo:27017/")
 
 class DishCollection:
     """ DishCollection stores the dishes and performs operations on them
@@ -12,59 +9,61 @@ class DishCollection:
     """
 
     def __init__(self):
-        self.opNum = 0
-        self.dishes = []
 
-        # # Extract dishes database
-        # dishes_db = mongo_client["dishesdb"]
-        #
-        # # Extract dishes collection
-        # self.dishes_coll = dishes_db["dishes"]
+        client = pymongo.MongoClient("mongodb://mongo:27017/")   # Connect to the MongoDB server
+        db = client["nutrition"]                                 # Access the database
 
-        # check if this is the first time starting up; i.e., do we already have a record with _id == 0 in the collection or not.
-        # If it does, do nothing.  if not, initialize
-        # if self.dishes_coll.find_one({"_id": 0}) is None:  # first time starting up this service as no document with _id ==0 exists
-        #     # insert a document into the database to have one "_id" index that starts at 0 and a field named "cur_key"
-        #     self.dishes_coll.insert_one({"_id": 0, "cur_key": 0})
-        #     print("Inserted dish containing cur_key with _id == 0 into the collection")
-        #     sys.stdout.flush()
+        # Check if the "dishes" collection exists, create it if it doesn't
+        if "diets" not in db.list_collection_names():
+            db.create_collection("dishes")
+
+        self.dishes = db["dishes"]    # Access the "dishes" collection
+
+        latest_dish_id = self.dishes.find_one(sort=[("_id", -1)])
+        if latest_dish_id is not None:
+            self.opNum = latest_dish_id["_id"]
+        else:
+            self.opNum = 0
 
 
     def retrieveAllDishes(self):
         """
-        Retrieve all dicts containing dishes insertDish
+        Retrieve all dishes
         :return: list of all dishes in the collection
         """
-        print("DishCollection: retrieving all dishes:")
-        dishes_list = [dish for dish in self.dishes]
-        print(dishes_list)
 
+        print("DishCollection: retrieving all dishes:")
+        dishes_list = []
+
+        cursor = self.dishes.find()  # Retrieve all documents from the collection
+        for dish in cursor:
+            dish_without_id = dish.copy()
+            del dish_without_id["_id"]
+            dishes_list.append(dish_without_id)
+
+        print(dishes_list)
         return dishes_list
 
-    # cursor = self.dishes_coll.find({"_id": {"$gte": 1}})
 
     def insertDish(self, dish_name):
         """
-        Insert a new dish based on dish name
+        Insert a new dish based on dish name, using API Ninja/Nutrition
         param: dish_name
-        return: id of the new dish (key) and status code
+        return: ID of the new dish
         """
 
-        # Iterate over existing dishes collection and check if dish with same name already exists
-        print("Checking if dish already exists")
-        for dish in self.dishes:
-
-            # If dish already exists, returns an error
-            if dish["name"] == dish_name:
-                print("DishCollection: dish ", dish_name, " already exists")
-                return -2
+        # Check if dish with the same name already exists
+        dish_exists = self.dishes.find_one({"name": dish_name})
+        if dish_exists:
+            print("DishCollection: dish", dish_name, "already exists")
+            return -2
 
         try:
             # Query API Ninja /nutrition
             api_url = 'https://api.api-ninjas.com/v1/nutrition?query={}'.format(dish_name)
             response = requests.get(api_url, headers={'X-Api-Key': '6zoIr+IoEg7H2GQGVDxw+g==WdtcKEIt1DOIoGKj'})
 
-            if response.status_code == requests.codes.ok: # Check status code of response
+            if response.status_code == requests.codes.ok:  # Check status code of response
                 dish_data = response.json()
 
                 # If dish not recognized by api/ninja
@@ -73,7 +72,6 @@ class DishCollection:
                     return -3
 
                 else:
-
                     # Iterate over all dishes to accumulate components
                     total_calories, total_sodium, total_sugar, total_serving_size = 0, 0, 0, 0
                     for _dish in dish_data:
@@ -85,18 +83,17 @@ class DishCollection:
                     self.opNum += 1  # increment latest operation number
 
                     # Add dish to dish collection
-                    self.dishes.append(
-                        {
-                            "name": dish_name,
-                            "ID": self.opNum,
-                            "cal": total_calories,
-                            "size": total_serving_size,
-                            "sodium": total_sodium,
-                            "sugar": total_sugar
-                        }
-                    )
-                    print(self.dishes)
-                    print("DishCollection: dish ", dish_name, " was added")
+                    dish = {
+                        "name": dish_name,
+                        "cal": total_calories,
+                        "size": total_serving_size,
+                        "sodium": total_sodium,
+                        "sugar": total_sugar,
+                        "ID": self.opNum,
+                        "_id": self.opNum
+                    }
+                    self.dishes.insert_one(dish)
+                    print("DishCollection: dish", dish_name, "was added")
 
             else:
                 print(f"Api Ninja/Nutrition not reachable: {response.status_code}, {response.text}")
@@ -109,46 +106,31 @@ class DishCollection:
 
     def findDishID(self, id):
         """
-        Return a single JSON object of the dish specified by its ID
+        Return a single BSON object of the dish specified by its ID
         :param id: the ID of the dish
-        :return: JSON object of the dish
+        :return: BSON object of the dish
         """
 
-        # if dishes are empty:
-        if not self.dishes:
-            return False, None
+        dish = self.dishes.find_one({"ID": id})
+        if dish:
+            print("DishCollection: found dish", dish, "with ID", id)
+            return True, dish
 
-        # look through and check if dish exists
-        else:
-
-            # If ID already exists in the collection
-            for dish in self.dishes:
-                if id == dish["ID"]:
-                    print("DishCollection: found dish ", dish, " with id ", id)
-                    return True, dish
-
-        print("DishCollection: did not find id", id)
+        print("DishCollection: did not find ID", id)
         return False, None
 
     def findDishName(self, name):
         """
-        Return a single JSON object of the dish specified by its name
+        Return a single BSON object of the dish specified by its name
         param name: the name of the dish
-        return: value of the dish
+        return: BSON object of the dish
         """
 
-        # if dishes are empty:
-        if not self.dishes:
-            return False, None
 
-        # look through and check if dish exists
-        else:
-
-            # If ID already exists in the collection
-            for dish in self.dishes:
-                if name == dish["name"]:
-                    print("DishCollection: found dish ", dish, " with name ", name)
-                    return True, dish
+        dish = self.dishes.find_one({"name": name})
+        if dish:
+            print("DishCollection: found dish", dish, "with name", name)
+            return True, dish
 
         print("DishCollection: did not find name", name)
         return False, None
@@ -160,13 +142,10 @@ class DishCollection:
         :return: True if deleted, False if not found
         """
 
-        # If ID exists, delete it
-        for dish in self.dishes:
-            if id == dish["ID"]:
-                d = dish["ID"]
-                self.dishes.remove(dish)
-                print("DishCollection: deleted dish ", d, " with id ", id)
-                return True, id
+        result = self.dishes.delete_one({"ID": id})
+        if result.deleted_count > 0:
+            print("DishCollection: deleted dish with ID", id)
+            return True, id
 
         return False, None
 
@@ -177,14 +156,10 @@ class DishCollection:
         :return: True if deleted, False if not found
         """
 
-        # If ID exists, delete it
-        id_to_delete = None
-        for dish in self.dishes:
-            if name == dish["name"]:
-                id_to_delete = dish["ID"]
-                self.dishes.remove(dish)
-                print("DishCollection: deleted dish ", dish, " with name ", name)
-                return True, id_to_delete
+        result = self.dishes.delete_many({"name": name})
+        if result.deleted_count > 0:
+            print("DishCollection: deleted dish with name", name)
+            return True, result.deleted_count
 
         return False, None
 
@@ -194,9 +169,10 @@ class DishCollection:
         :params: list of dish IDs
         :return: True or False depending on results
         """
-        dish_ids_that_exist = [dish['ID'] for dish in self.dishes]
+
+        dish_ids_that_exist = [dish['ID'] for dish in self.dishes.find()]  # Retrieve IDs of existing dishes
         print(f"Dishes that exist: {dish_ids_that_exist}")
-        print(f"Dishes ID needed to create: {list_of_ids}")
+        print(f"Dishes IDs needed to create: {list_of_ids}")
 
         exists = all(elem in dish_ids_that_exist for elem in list_of_ids)
         print(f"All dishes exist: {exists}")
@@ -205,9 +181,10 @@ class DishCollection:
     def extract_value(self, id, field):
         """ Given the ID of a dish and the field to extract, return the value """
 
-        for dish in self.dishes:
-            if id == dish["ID"]:
-                return dish[field]
+        dish = self.dishes.find_one({"ID": id})  # Retrieve the dish document with the specified ID
+        if dish:
+            return dish.get(field)  # Return the value of the specified field
+        return None
 
 class MealCollection:
     """ MealCollection stores the dishes and performs operations on them

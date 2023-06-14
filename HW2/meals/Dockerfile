@@ -5,6 +5,7 @@ WORKDIR ./meals
 RUN pip install requests
 RUN pip install flask
 RUN pip install flask_restful
+RUN pip install pymongo
 
 COPY main.py .
 COPY model.py .
