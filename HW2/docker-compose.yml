@@ -2,19 +2,18 @@ version: '3'
 
 services:
 
-  meals-service:
-    build: ./meals
-    volumes:
-      - type: bind
-        source: ./meals  #host directory
-        target: /meals # container directory
-    environment:
-      FLASK_DEBUG: "true"
+  mongo:
+    image: mongo
+    restart: always
     ports:
-      - "5001:5001"  # host:container
+      - 27017:27017 # In daniels example mapping is without quotes
+    volumes:
+      - mongo_data:/data/db
 
-  diet-service:
+
+  diets-service:
     build: ./diets
+    restart: always
     volumes:
       - type: bind
         source: ./diets #host directory
@@ -23,6 +22,25 @@ services:
       FLASK_DEBUG: "true"
     ports:
       - "5002:5002"  # host:container
+    expose:
+      - 5002
+    depends_on:
+      - mongo
+
+  meals-service:
+    build: ./meals
+    restart: always
+    volumes:
+      - type: bind
+        source: ./meals  #host directory
+        target: /meals # container directory
+    environment:
+      FLASK_DEBUG: "true"
+    ports:
+      - "5001:5001"  # host:container
+    depends_on:
+      - diets-service
+
 
   reverse:
     build: ./reverse
@@ -30,14 +48,7 @@ services:
       - "80:80"
     depends_on:
       - meals-service
-      - diet-service
+      - diets-service
 
-#  mongo:
-#    image: mongo
-#    ports:
-#      - "27017:27017" # In daniels example mapping is without quotes
-#    volumes:
-#      - mongo_data:/data/db
-#
-#volumes:
-#  mongo_data:
+volumes:
+  mongo_data:

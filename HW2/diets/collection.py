@@ -1,3 +1,19 @@
+# import pymongo
+#
+# client = pymongo.MongoClient("mongodb://mongo:27017/")  # Establish a connection to MongoDB
+# db = client["nutrition"]                                # Access the "nutrition" database
+# dietscoll = db["diets"]                                 # Access the "diets" collection
+# result = dietscoll.insert_one({"_id":1, "value": "test - first value in diets DB"})
+#
+# # Print the inserted document
+# print(result.inserted_id)
+#
+# # Retrieve all documents in the collection
+# documents = dietscoll.find()
+# for document in documents:
+#     print(document)
+
+
 class DietCollection:
     """ DietCollection stores the old and performs operations on them
     Each diet is stored in a dictionary with a unique numerical key called id,
@@ -7,6 +23,18 @@ class DietCollection:
     def __init__(self):
         self.opNum = 0
         self.diets = {}
+
+        # client = pymongo.MongoClient("mongodb://mongo:27017/")   # Connect to the MongoDB server
+        # db = client["nutrition"]                                 # Access the database
+        #
+        # # Check if the "diets" collection exists, create it if it doesn't
+        # if "diets" not in db.list_collection_names():
+        #     db.create_collection("diets")
+        #
+        # self.diets = db["diets"]    # Access the "diets" collection
+
+        # keynum = self.diets.find_one(sort=[("_id", -1)])["_id"]
+        # keynum +=1
 
     def retrieveAllDiets(self):
         """

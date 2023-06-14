@@ -21,10 +21,10 @@ api.add_resource(DishesName, '/dishes/<string:name>')
 api.add_resource(Meals, '/meals')
 
 # Associate the Resource /meal/ID with the MealsID class
-api.add_resource(MealsID, '/meal/<int:id>')
+api.add_resource(MealsID, '/meals/<int:id>')
 
 # Associate the Resource /meal/name with the MealsName class
-api.add_resource(MealsName, '/meal/<string:name>')
+api.add_resource(MealsName, '/meals/<string:name>')
 
 if __name__ == '__main__':
 

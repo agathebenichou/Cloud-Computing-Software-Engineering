@@ -192,7 +192,7 @@ class Meals(Resource):
             print(f"searching for diet name {diet_name}")
 
             # Define diets url with diet name
-            diets_service_url = f"http://diet-service:5002/diets/{diet_name}"
+            diets_service_url = f"http://diets-service:5002/diets/{diet_name}"
 
             # Send GET request to diets service
             diet_response = requests.get(diets_service_url)
