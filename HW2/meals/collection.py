@@ -238,10 +238,10 @@ class MealCollection:
             if dish_id == meal["appetizer"]:
                 meal["appetizer"] = None
                 delete_components = True
-            elif dish_id == meal["main"]:
+            if dish_id == meal["main"]:
                 meal["main"] = None
                 delete_components = True
-            elif dish_id == meal["dessert"]:
+            if dish_id == meal["dessert"]:
                 meal["dessert"] = None
                 delete_components = True
 
