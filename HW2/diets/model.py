@@ -35,14 +35,14 @@ class Diets(Resource):
         Adds a diet to /diets given a JSON object with fields: name, cal, sodium, sugar
         :return: ID given to the created diet
         """
-        
+
         if request.headers is None:
             print("Request Content-Type not specified in header")
-            return 0, 415
+            return "POST expects content type to be application/json", 415
 
         if type(request.headers) != dict:
             print("Request Content-Type not specified in header")
-            return 0, 415
+            return "POST expects content type to be application/json", 415
 
         # if request content-type is not application/json
         if 'Content-Type' not in dict(request.headers).keys():
