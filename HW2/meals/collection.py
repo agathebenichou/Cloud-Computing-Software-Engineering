@@ -225,8 +225,10 @@ class MealCollection:
         :param dish_id: dish ID being deleted
         """
 
-        for meal in self.meals:
+        cursor = self.meals.find()  # Retrieve all documents from the collection
+        for meal in cursor:
             delete_components = False
+            print(meal)
 
             # null out the dish ID that was deleted and associated with the meal
             if dish_id == meal["appetizer"]:
@@ -241,160 +243,155 @@ class MealCollection:
 
             if delete_components: # if a dish ID was deleted, null out the components
                 meal["cal"], meal["sodium"], meal["sugar"] = None, None, None
+                self.meals.update_one({'_id': meal['_id']}, {'$set': meal})
 
     def insertMeal(self, meal_name, appetizer_id, main_id, dessert_id, disheColl):
         """ Insert a meal given the name and the corresponding dish IDs. To create a meal, it
         computes the total number of calories, sodium, sugar.
-
         :param: meal name and component dish IDs
         :returns: the ID of the created meal
         """
 
-        for meal in self.meals:
-            print(meal)
-            if meal["name"] == meal_name:
-                print("MealCollection: meal ", meal_name, " already exists")
-                return -2
+        # Check if dish with the same name already exists
+        meal_exists = self.meals.find_one({"name": meal_name})
+        if meal_exists:
+            print("MealCollection: meal", meal_name, "already exists")
+            return -2
 
         self.opNum += 1  # increment latest operation number
 
-        self.meals.append(
-            {
-                "name": meal_name,
-                "ID": self.opNum,
-                "appetizer": appetizer_id,
-                "main": main_id,
-                "dessert": dessert_id,
-                "cal": sum(
-                    cal for cal in [
-                        disheColl.extract_value(id=appetizer_id, field="cal"),
-                        disheColl.extract_value(id=main_id, field="cal"),
-                        disheColl.extract_value(id=dessert_id, field="cal")
-                    ]
-                ),
-                "sodium": sum(
-                    sodium for sodium in [
-                        disheColl.extract_value(id=appetizer_id, field="sodium"),
-                        disheColl.extract_value(id=main_id, field="sodium"),
-                        disheColl.extract_value(id=dessert_id, field="sodium")
-                    ]
-                ),
-                "sugar": sum(
-                    sugar for sugar in [
-                        disheColl.extract_value(id=appetizer_id, field="sugar"),
-                        disheColl.extract_value(id=main_id, field="sugar"),
-                        disheColl.extract_value(id=dessert_id, field="sugar")
-                    ]
-                )
-            }
-        )
+        meal = {
+            "name": meal_name,
+            "ID": self.opNum,
+            "appetizer": appetizer_id,
+            "main": main_id,
+            "dessert": dessert_id,
+            "cal": sum(
+                cal for cal in [
+                    disheColl.extract_value(id=appetizer_id, field="cal"),
+                    disheColl.extract_value(id=main_id, field="cal"),
+                    disheColl.extract_value(id=dessert_id, field="cal")
+                ]
+            ),
+            "sodium": sum(
+                sodium for sodium in [
+                    disheColl.extract_value(id=appetizer_id, field="sodium"),
+                    disheColl.extract_value(id=main_id, field="sodium"),
+                    disheColl.extract_value(id=dessert_id, field="sodium")
+                ]
+            ),
+            "sugar": sum(
+                sugar for sugar in [
+                    disheColl.extract_value(id=appetizer_id, field="sugar"),
+                    disheColl.extract_value(id=main_id, field="sugar"),
+                    disheColl.extract_value(id=dessert_id, field="sugar")
+                ]
+            )
+        }
+        self.meals.insert_one(meal)
         print("MealCollection: meal ", meal_name, " was added")
 
         return self.opNum
 
     def delMealID(self, id):
-        """" Given a meal ID, delete it from the collection
-
+        """ Given a meal ID, delete it from the collection
         :params: the ID of a meal to delete
         :returns: True if successfully deleted, False if not found
         """
-        for meal in self.meals:
-            if id == meal["ID"]:
-                self.meals.remove(meal)
-                print("MealCollection: deleted meal with id ", id)
-                return True, id
+        result = self.meals.delete_one({"ID": id})
+        if result.deleted_count > 0:
+            print("MealCollection: deleted meal with id ", id)
+            return True, result.deleted_count
 
         return False, None  # the key does not exist in the collection
 
     def delMealName(self, name):
         """ Given a meal name, delete the meal
-
         :params: the name of the meal to delete
         :returns: True if successfully deleted (and its ID), False if not
         """
 
-        for meal in self.meals:
-            if name == meal["name"]:
-                id_deleted = meal["ID"]
-                self.meals.remove(meal)
-                print("MealCollection: deleted meal with name ", name)
-                return True, id_deleted
+        result = self.meals.delete_many({"name": name})
+        if result.deleted_count > 0:
+            print("MealCollection: deleted meal with name", name)
+            return True, result.deleted_count
 
         return False, None  # the key does not exist in the collection
 
     def findMealID(self, id):
         """ Given a meal ID, find the resulting collection
-
         :params: the ID of the meal to find
         :returns: True if found, False if not
         """
 
-        for meal in self.meals:
-            if id == meal["ID"]:
-                print("MealCollection: found meal ", meal, " with id ", id)
-                return True, meal
+        meal = self.meals.find_one({"ID": id})
+        if meal:
+            del meal["_id"]  # Remove the internal Mongo ID
+            print("MealCollection: found dish", meal, "with ID", id)
+            return True, meal
 
-        print("MealCollection: did not find id", id)
-        return False, None  # the key does not exist in the collection
+        print("DishCollection: did not find ID", id)
+        return False, None
 
     def findMealName(self, name):
         """ Returns a single JSON object of the meal specified by its name
-         param name: the name of the meal
-         return: value of the meal
+        :params: the name of the meal
+        :returns: value of the meal
         """
 
-        for meal in self.meals:
-            if name == meal["name"]:
-                print("MealCollection: found meal ", meal, " with name ", name)
-                return True, meal
+        meal = self.meals.find_one({"name": name})
+        if meal:
+            del meal["_id"]  # Remove the internal Mongo ID
+            print("MealCollection: found dish", meal, "with name", name)
+            return True, meal
 
         print("MealCollection: did not find name", name)
-        return False, None  # the key does not exist in the collection
+        return False, None
 
     def replaceMeal(self, id, meal_name, appetizer_id, main_id, dessert_id, disheColl):
         """ Given a meal ID, replaces the meal components with the new meal name and component IDs
-
         :params: ID of meal to replace and new components (name and IDs)
         :returns: True if updated, False if meal was not in collection
         """
 
-        for meal in self.meals:
+        cursor = self.meals.find()  # Retrieve all documents from the collection
+        for meal in cursor:
             if id == meal["ID"]:
 
                 # Delete old meal
-                self.meals.remove(meal)
+                self.meals.delete_one({"ID": id})
+
+                updated_meal = {
+                    "name": meal_name,
+                    "ID": id,
+                    "appetizer": appetizer_id,
+                    "main": main_id,
+                    "dessert": dessert_id,
+                    "cal": sum(
+                        cal for cal in [
+                            disheColl.extract_value(id=appetizer_id, field="cal"),
+                            disheColl.extract_value(id=main_id, field="cal"),
+                            disheColl.extract_value(id=dessert_id, field="cal")
+                        ]
+                    ),
+                    "sodium": sum(
+                        sodium for sodium in [
+                            disheColl.extract_value(id=appetizer_id, field="sodium"),
+                            disheColl.extract_value(id=main_id, field="sodium"),
+                            disheColl.extract_value(id=dessert_id, field="sodium")
+                        ]
+                    ),
+                    "sugar": sum(
+                        sugar for sugar in [
+                            disheColl.extract_value(id=appetizer_id, field="sugar"),
+                            disheColl.extract_value(id=main_id, field="sugar"),
+                            disheColl.extract_value(id=dessert_id, field="sugar")
+                        ]
+                    )
+                }
 
                 # Replace with updated meal
-                self.meals.append(
-                    {
-                        "name": meal_name,
-                        "ID": id,
-                        "appetizer": appetizer_id,
-                        "main": main_id,
-                        "dessert": dessert_id,
-                        "cal": sum(
-                            cal for cal in [
-                                disheColl.extract_value(id=appetizer_id, field="cal"),
-                                disheColl.extract_value(id=main_id, field="cal"),
-                                disheColl.extract_value(id=dessert_id, field="cal")
-                            ]
-                        ),
-                        "sodium": sum(
-                            sodium for sodium in [
-                                disheColl.extract_value(id=appetizer_id, field="sodium"),
-                                disheColl.extract_value(id=main_id, field="sodium"),
-                                disheColl.extract_value(id=dessert_id, field="sodium")
-                            ]
-                        ),
-                        "sugar": sum(
-                            sugar for sugar in [
-                                disheColl.extract_value(id=appetizer_id, field="sugar"),
-                                disheColl.extract_value(id=main_id, field="sugar"),
-                                disheColl.extract_value(id=dessert_id, field="sugar")
-                            ]
-                        )
-                    }
-                )
+                self.meals.insert_one(updated_meal)
 
                 print(f"MealCollection: New meal {meal_name} added as ID={id}")
                 return True, id
