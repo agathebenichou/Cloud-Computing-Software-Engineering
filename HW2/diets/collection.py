@@ -34,9 +34,9 @@ class DietCollection:
 
         cursor = self.diets.find()  # Retrieve all documents from the collection
         for diet in cursor:
-            #diet_without_id = diet.copy()
-            del diet["_id"]
-            diets_list.append(diet)
+            diet_copy = diet.copy()
+            del diet_copy["_id"]
+            diets_list.append(diet_copy)
 
         print(diets_list)
         return diets_list
@@ -78,7 +78,8 @@ class DietCollection:
         diet = self.diets.find_one({"name": name})  # Find the diet by name in the collection
 
         if diet is not None:
-            del diet["_id"]
-            return True, diet
+            diet_copy = diet.copy()
+            del diet_copy["_id"]
+            return True, diet_copy
         else:
             return False, None
