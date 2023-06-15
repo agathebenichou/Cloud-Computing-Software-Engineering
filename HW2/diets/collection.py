@@ -29,7 +29,7 @@ class DietCollection:
         """ Retrieve all diets from the collection
         :return: list of all old in the collection, excluding the "ID" key
         """
-        print("DietCollection: retrieving all old:")
+        print("DietCollection: retrieving all diets:")
         diets_list = []
 
         cursor = self.diets.find()  # Retrieve all documents from the collection
@@ -76,7 +76,6 @@ class DietCollection:
         """
 
         diet = self.diets.find_one({"name": name})  # Find the diet by name in the collection
-
         if diet is not None:
             diet_copy = diet.copy()
             del diet_copy["_id"]

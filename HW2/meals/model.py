@@ -43,6 +43,14 @@ class Dishes(Resource):
         :return: id: dish ID given to the dish
         """
 
+        if request.headers is None:
+            print("Request Content-Type not specified in header")
+            return 0, 415
+
+        if type(request.headers) != dict:
+            print("Request Content-Type not specified in header")
+            return 0, 415
+
         # if request content-type is not application/json
         if 'Content-Type' not in dict(request.headers).keys():
             print("Request Content-Type not specified in header")
@@ -231,6 +239,14 @@ class Meals(Resource):
         Adds a meal to /meals given a JSON object with fields: name, appetizer, main, dessert
         :return: id: ID given to the created meal
         """
+
+        if request.headers is None:
+            print("Request Content-Type not specified in header")
+            return 0, 415
+
+        if type(request.headers) != dict:
+            print("Request Content-Type not specified in header")
+            return 0, 415
 
         # if request content-type is not application/json
         if 'Content-Type' not in dict(request.headers).keys():
