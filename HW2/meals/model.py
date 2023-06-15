@@ -114,9 +114,9 @@ class DishesID(Resource):
         """
 
         (status, dish_id) = dishColl.delDishID(id)
-        if status: # return deleted dish and HTTP 200 ok code
+        if status: # return deleted dish ID and HTTP 200 ok code
 
-            # update all meals to delete dish ID
+            # Update meals that had the dish
             mealColl.updateMeals(dish_id)
 
             return dish_id, 200
@@ -143,9 +143,9 @@ class DishesName(Resource):
         """
 
         (status, dish_id) = dishColl.delDishName(name)
-        if status: # return deleted word and HTTP 200 ok code
+        if status: # return deleted dish ID and HTTP 200 ok code
 
-            # Update meal based off of
+            # Update meals that had the dish
             mealColl.updateMeals(dish_id)
 
             return dish_id, 200
@@ -207,7 +207,7 @@ class Meals(Resource):
                 for meal in mealColl.retrieveAllMeals():
 
                     # if the meal has valid components
-                    if meal["cal"] and meal["sodium"] and meal["sugar"]:
+                    if meal["cal"] is not None and meal["sodium"] is not None and meal["sugar"] is not None:
 
                         # if the meal satisfies the diet
                         if (
