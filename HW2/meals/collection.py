@@ -152,7 +152,7 @@ class DishCollection:
         :return: True if deleted, False if not found
         """
 
-        result = self.dishes.delete_many({"name": name})
+        result = self.dishes.delete_one({"name": name})
         if result.deleted_count > 0:
             print("DishCollection: deleted dish with name", name)
             return True, result.deleted_count
@@ -314,7 +314,7 @@ class MealCollection:
         :returns: True if successfully deleted (and its ID), False if not
         """
 
-        result = self.meals.delete_many({"name": name})
+        result = self.meals.delete_one({"name": name})
         if result.deleted_count > 0:
             print("MealCollection: deleted meal with name", name)
             return True, result.deleted_count
