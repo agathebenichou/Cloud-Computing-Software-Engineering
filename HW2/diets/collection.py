@@ -48,7 +48,7 @@ class DietCollection:
         # Check if diet with the same name already exists in the collection
         existing_diet = self.diets.find_one({"name": diet_name})
         if existing_diet:
-            print("Diet with name", diet_name, "already exists")
+            print("Diet with name", diet_name, "already exists")  # Instructions are "Diet with <name> already exists", different to the screenshot, dont think it matters
             return 0
 
         self.opNum += 1  # increment latest operation number
@@ -77,6 +77,7 @@ class DietCollection:
         diet = self.diets.find_one({"name": name})  # Find the diet by name in the collection
 
         if diet is not None:
+            del diet["_id"]
             return True, diet
         else:
             return False, None
