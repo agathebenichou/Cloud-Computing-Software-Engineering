@@ -76,9 +76,9 @@ class DietCollection:
         """
 
         diet = self.diets.find_one({"name": name})  # Find the diet by name in the collection
-        if diet is not None:
+        if diet:
             diet_copy = diet.copy()
             del diet_copy["_id"]
             return True, diet_copy
-        else:
-            return False, None
+
+        return False, None

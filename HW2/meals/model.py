@@ -48,10 +48,6 @@ class Dishes(Resource):
             print("Request Content-Type not specified in header")
             return 0, 415
 
-        if type(request.headers) != dict:
-            print("Request Content-Type not specified in header")
-            return 0, 415
-
         # if request content-type is not application/json
         if 'Content-Type' not in dict(request.headers).keys():
             print("Request Content-Type not specified in header")
@@ -60,8 +56,13 @@ class Dishes(Resource):
             if dict(request.headers)['Content-Type'] != "application/json":
                 print("Request Content-Type is not application/json")
                 return 0, 415
+        try:
+            data = request.json
+        except Exception as e:
+            print("Request Content-Type not specified in header")
+            return 0, 415
 
-        data = request.json # accept data as json
+        #data = request.json # accept data as json
 
         # if body is not of type dict
         if type(data) != dict:
@@ -255,13 +256,12 @@ class Meals(Resource):
                 return 0, 415
 
         try:
-            data = json.dumps(request.json)
+            data = request.json
         except Exception as e:
-            print(e)
             print("Request Content-Type not specified in header")
             return 0, 415
 
-        data = request.json
+        #data = request.json
 
         # if body is not of type dict
         if type(data) != dict:

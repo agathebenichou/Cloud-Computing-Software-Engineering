@@ -40,10 +40,6 @@ class Diets(Resource):
             print("Request Content-Type not specified in header")
             return "POST expects content type to be application/json", 415
 
-        if type(request.headers) != dict:
-            print("Request Content-Type not specified in header")
-            return "POST expects content type to be application/json", 415
-
         # if request content-type is not application/json
         if 'Content-Type' not in dict(request.headers).keys():
             print("Request Content-Type not specified in header")
@@ -52,7 +48,13 @@ class Diets(Resource):
             if dict(request.headers)['Content-Type'] != "application/json":
                 return "POST expects content type to be application/json", 415
 
-        data = request.json # accept data as json
+        try:
+            data = request.json
+        except Exception as e:
+            print("Request Content-Type not specified in header")
+            return "POST expects content type to be application/json", 415
+
+        #data = request.json # accept data as json
 
         # if body is not of type dict
         if type(data) != dict:
