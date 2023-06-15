@@ -33,7 +33,7 @@ class Diets(Resource):
     def post(self):
         """
         Adds a diet to /diets given a JSON object with fields: name, cal, sodium, sugar
-        :return: id: ID given to the created diet
+        :return: ID given to the created diet
         """
         # if request content-type is not application/json
         if 'Content-Type' not in dict(request.headers).keys():
@@ -41,7 +41,7 @@ class Diets(Resource):
             return 0, 415
         else:
             if dict(request.headers)['Content-Type'] != "application/json":
-                return "POST expects content type ot be application/json", 415
+                return "POST expects content type to be application/json", 415
 
         data = request.json # accept data as json
 
@@ -70,7 +70,7 @@ class DietsName(Resource):
     global dietColl
 
     def get(self, name):
-        """ Retrieve a specific diet from the collection based off its name
+        """ Retrieve a specific diet from the collection based on its name
         :param: the name of the diet to retrieve
         :return: the diet and the status code
         """
@@ -79,4 +79,4 @@ class DietsName(Resource):
         if b:
             return w, 200  # return the diet and status code 200 ok
         else:
-            return f"Diet {name} not found", 202
+            return f"Diet {name} not found", 404
