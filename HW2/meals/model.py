@@ -1,4 +1,5 @@
 import requests
+import json
 from flask import request
 from flask_restful import Resource
 from .collection import DishCollection, MealCollection
@@ -244,10 +245,6 @@ class Meals(Resource):
             print("Request Content-Type not specified in header")
             return 0, 415
 
-        if type(request.headers) != dict:
-            print("Request Content-Type not specified in header")
-            return 0, 415
-
         # if request content-type is not application/json
         if 'Content-Type' not in dict(request.headers).keys():
             print("Request Content-Type not specified in header")
@@ -256,6 +253,13 @@ class Meals(Resource):
             if dict(request.headers)['Content-Type'] != "application/json":
                 print("Request Content-Type is not application/json")
                 return 0, 415
+
+        try:
+            data = json.dumps(request.json)
+        except Exception as e:
+            print(e)
+            print("Request Content-Type not specified in header")
+            return 0, 415
 
         data = request.json
 
