@@ -7,4 +7,5 @@ To package and run the application:
 3. Launch the Docker compose: "docker-compose up"
 4. Invoke the API through Postman, Insomnia or the URL
 * http://localhost:5001/dishes and http://localhost:5001/meals to send all requests to the Meals Service
-* https://
+* http://localhost:5002/diets to send all requests to the Diets Service
+* http://localhost:80/dishes, /meals, /diets to send GET requests to the Meals and Diets Service

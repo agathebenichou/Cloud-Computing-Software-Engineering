@@ -9,6 +9,9 @@ class DietCollection:
     """
 
     def __init__(self):
+        """ Initialize the connection to the MongoDB server and access the database
+        Extract the diets collection and find latest ID
+        """
 
         client = pymongo.MongoClient("mongodb://mongo:27017/")   # Connect to the MongoDB server
         db = client["nutrition"]                                 # Access the database
@@ -29,6 +32,7 @@ class DietCollection:
         """ Retrieve all diets from the collection
         :return: list of all old in the collection, excluding the "ID" key
         """
+
         print("DietCollection: retrieving all diets:")
         diets_list = []
 

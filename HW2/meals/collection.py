@@ -9,6 +9,9 @@ class DishCollection:
     """
 
     def __init__(self):
+        """ Initialize the connection to the MongoDB server and access the database
+        Extract the dishes collection and find latest ID
+        """
 
         client = pymongo.MongoClient("mongodb://mongo:27017/")   # Connect to the MongoDB server
         db = client["nutrition"]                                 # Access the database
@@ -104,7 +107,7 @@ class DishCollection:
     def findDishID(self, id):
         """ Return a single BSON object of the dish specified by its ID
         :param id: the ID of the dish
-        :return: BSON object of the dish
+        :return: JSON object of the dish
         """
 
         dish = self.dishes.find_one({"ID": id})
@@ -138,6 +141,7 @@ class DishCollection:
         :param id: dish ID to delete
         :return: True if deleted, False if not found
         """
+
         result = self.dishes.delete_one({"ID": id})
         if result.deleted_count > 0:
             print("DishCollection: deleted dish with ID", id)
@@ -150,6 +154,7 @@ class DishCollection:
         :param name: dish name to delete
         :return: True if deleted, False if not found
         """
+
         dish_to_delete = self.dishes.find_one({"name": name})
 
         if dish_to_delete:
@@ -191,6 +196,9 @@ class MealCollection:
     """
 
     def __init__(self):
+        """ Initialize the connection to the MongoDB server and access the database
+        Extract the meals collection and find latest ID
+        """
 
         client = pymongo.MongoClient("mongodb://mongo:27017/")  # Connect to the MongoDB server
         db = client["nutrition"]  # Access the database
@@ -303,6 +311,7 @@ class MealCollection:
         :params: the ID of a meal to delete
         :returns: True if successfully deleted, False if not found
         """
+
         result = self.meals.delete_one({"ID": id})
         if result.deleted_count > 0:
             print("MealCollection: deleted meal with id ", id)
@@ -315,6 +324,7 @@ class MealCollection:
         :params: the name of the meal to delete
         :returns: True if successfully deleted (and its ID), False if not
         """
+
         meal_to_delete = self.meals.find_one({"name": name})
 
         if meal_to_delete:
