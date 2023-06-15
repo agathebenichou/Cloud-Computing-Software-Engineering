@@ -1,5 +1,4 @@
 import requests
-import json
 from flask import request
 from flask_restful import Resource
 from .collection import DishCollection, MealCollection
@@ -36,7 +35,6 @@ class Dishes(Resource):
 
         return dishColl.retrieveAllDishes(), 200
 
-
     def post(self):
         """
         Adds a dish to /dishes and returns its ID
@@ -61,8 +59,6 @@ class Dishes(Resource):
         except Exception as e:
             print("Request Content-Type not specified in header")
             return 0, 415
-
-        #data = request.json # accept data as json
 
         # if body is not of type dict
         if type(data) != dict:
@@ -261,13 +257,10 @@ class Meals(Resource):
             print("Request Content-Type not specified in header")
             return 0, 415
 
-        #data = request.json
-
         # if body is not of type dict
         if type(data) != dict:
             return 0, 415
         else:
-
             # not all keys are present
             keys = ['name', 'appetizer', 'main', 'dessert']
             all_present = all(elem in data.keys() for elem in keys)
@@ -382,7 +375,6 @@ class MealsID(Resource):
 
 class MealsName(Resource):
     """ Implements the REST operations for the /meals/{name} resource
-
     /meals/{name}
         GET (return the JSON object of the meal given the name)
         DELETE (delete a meal of the given name)
