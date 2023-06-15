@@ -1,7 +1,7 @@
 import requests
 import json
 
-URL = "http://127.0.0.1:8000"
+URL = "http://127.0.0.1:5001"
 
 
 def http_get(resource: str):

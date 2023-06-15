@@ -38,7 +38,7 @@ class Diets(Resource):
         # if request content-type is not application/json
         if 'Content-Type' not in dict(request.headers).keys():
             print("Request Content-Type not specified in header")
-            return 0, 415
+            return "POST expects content type to be application/json", 415
         else:
             if dict(request.headers)['Content-Type'] != "application/json":
                 return "POST expects content type to be application/json", 415
@@ -57,9 +57,10 @@ class Diets(Resource):
 
         code = dietColl.insertDiet(d, data['cal'], data['sodium'], data['sugar'])  # add diet to collection
         if not code: # if it returns 0, then the diet already exists
-            return f"Diet {d} already exists", 422
+            return f"Diet with {d} already exists", 422
 
         return f"Diet {d} was created successfully", 201
+
 
 class DietsName(Resource):
     """ Implements the REST operations for the /diets/{name} resource
