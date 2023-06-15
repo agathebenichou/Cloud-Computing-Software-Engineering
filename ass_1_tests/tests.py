@@ -54,7 +54,6 @@ def test_get_all_dishes_works():
     assert len(dishes) > 0
 
 
-# will not pass due to restructure
 def test_get_all_dishes():
     response = connectionController.http_get("dishes")
     assert_err_code(response, error_code=200)
@@ -62,7 +61,10 @@ def test_get_all_dishes():
     DISH_INDEX = "1"
     dishes = response.json()
     assert len(dishes) > 0
-    dish = dishes[DISH_INDEX]
+
+    for d in dishes:
+        if d["ID"] == int(DISH_INDEX):
+            dish = d
 
     assert "ID" in dish
     assert "name" in dish
@@ -197,7 +199,6 @@ def test_get_all_meals_works():
     assert len(meals) > 0
 
 
-# will not work due to restructure
 def test_get_all_meals():
     response = connectionController.http_get("meals")
     assert_err_code(response, error_code=200)
@@ -206,7 +207,9 @@ def test_get_all_meals():
     assert len(meals) > 0
 
     DISH_INDEX = "1"
-    meal = meals[DISH_INDEX]
+    for d in meals:
+        if d["ID"] == int(DISH_INDEX):
+            meal = d
     assert_meal(meal)
 
 
