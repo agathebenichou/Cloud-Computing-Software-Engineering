@@ -138,7 +138,6 @@ class DishCollection:
         :param id: dish ID to delete
         :return: True if deleted, False if not found
         """
-
         result = self.dishes.delete_one({"ID": id})
         if result.deleted_count > 0:
             print("DishCollection: deleted dish with ID", id)
@@ -151,11 +150,12 @@ class DishCollection:
         :param name: dish name to delete
         :return: True if deleted, False if not found
         """
-
+        dish_to_delete = self.dishes.find_one({"name": name})
+        dish_to_delete_id = dish_to_delete["ID"]
         result = self.dishes.delete_one({"name": name})
         if result.deleted_count > 0:
             print("DishCollection: deleted dish with name", name)
-            return True, result.deleted_count
+            return True, dish_to_delete_id
 
         return False, None
 
@@ -304,7 +304,7 @@ class MealCollection:
         result = self.meals.delete_one({"ID": id})
         if result.deleted_count > 0:
             print("MealCollection: deleted meal with id ", id)
-            return True, result.deleted_count
+            return True, id
 
         return False, None  # the key does not exist in the collection
 
@@ -313,11 +313,12 @@ class MealCollection:
         :params: the name of the meal to delete
         :returns: True if successfully deleted (and its ID), False if not
         """
-
+        meal_to_delete = self.meals.find_one({"name": name})
+        meal_to_delete_id = meal_to_delete["ID"]
         result = self.meals.delete_one({"name": name})
         if result.deleted_count > 0:
             print("MealCollection: deleted meal with name", name)
-            return True, result.deleted_count
+            return True, meal_to_delete_id
 
         return False, None  # the key does not exist in the collection
 
