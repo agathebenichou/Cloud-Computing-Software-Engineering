@@ -243,7 +243,7 @@ class MealCollection:
                 meal["dessert"] = None
                 delete_components = True
 
-            if delete_components: # if a dish ID was deleted, null out the components
+            if delete_components: # if a dish was deleted, null out the components
                 meal["cal"], meal["sodium"], meal["sugar"] = None, None, None
                 self.meals.update_one({'_id': meal['_id']}, {'$set': meal})
 
@@ -264,8 +264,6 @@ class MealCollection:
 
         meal = {
             "name": meal_name,
-            "ID": self.opNum,
-            "_id": self.opNum,
             "appetizer": appetizer_id,
             "main": main_id,
             "dessert": dessert_id,
@@ -289,7 +287,9 @@ class MealCollection:
                     disheColl.extract_value(id=main_id, field="sugar"),
                     disheColl.extract_value(id=dessert_id, field="sugar")
                 ]
-            )
+            ),
+            "ID": self.opNum,
+            "_id": self.opNum,
         }
         self.meals.insert_one(meal)
         print("MealCollection: meal ", meal_name, " was added")
