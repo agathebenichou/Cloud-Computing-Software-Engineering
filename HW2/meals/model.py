@@ -189,7 +189,7 @@ class Meals(Resource):
         diet_name = request.args.get('diet')
         if diet_name:
 
-            print(f"searching for diet name {diet_name}")
+            print(f"Searching for diet name {diet_name}")
 
             # Define diets url with diet name
             diets_service_url = f"http://diets-service:5002/diets/{diet_name}"
@@ -200,11 +200,22 @@ class Meals(Resource):
             # If the diet exists, extract and filter for meals
             if diet_response.status_code == 200:
 
+                # Extract diet
                 diet = diet_response.json()
+
                 filtered_meals = []
-                for meal in mealColl.meals:
-                    if (meal['cal'] <= diet['cal'] and meal['sodium'] <= diet['sodium'] and meal['sugar'] <= diet['sugar']):
-                        filtered_meals.append(meal)
+                for meal in mealColl.retrieveAllMeals():
+
+                    # if the meal has valid components
+                    if meal["cal"] and meal["sodium"] and meal["sugar"]:
+
+                        # if the meal satisfies the diet
+                        if (
+                            meal['cal'] <= diet['cal'] and
+                            meal['sodium'] <= diet['sodium'] and
+                            meal['sugar'] <= diet['sugar']
+                        ):
+                            filtered_meals.append(meal)
                 return filtered_meals, 200
 
             # No diet of that name exists

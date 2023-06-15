@@ -20,9 +20,9 @@ class DishCollection:
         self.dishes = db["dishes"]    # Access the "dishes" collection
 
         # Extract the dish with the highest ID value (most recently inserted)
-        latest_dish_id = self.dishes.find_one(sort=[("_id", -1)])
+        latest_dish_id = self.dishes.find_one(sort=[("ID", -1)])
         if latest_dish_id is not None:
-            self.opNum = latest_dish_id["_id"]
+            self.opNum = latest_dish_id["ID"]
         else: # Initialize to 0 if there are no dishes
             self.opNum = 0
 
@@ -36,9 +36,9 @@ class DishCollection:
 
         cursor = self.dishes.find()  # Retrieve all documents from the collection
         for dish in cursor:
-            #dish_without_id = dish.copy()
-            del dish["_id"] # Remove the internal Mongo ID
-            dishes_list.append(dish)
+            dish_copy = dish.copy()
+            del dish_copy["_id"] # Remove the internal Mongo ID
+            dishes_list.append(dish_copy)
 
         print(dishes_list)
         return dishes_list
@@ -109,9 +109,10 @@ class DishCollection:
 
         dish = self.dishes.find_one({"ID": id})
         if dish:
-            del dish["_id"]  # Remove the internal Mongo ID
-            print("DishCollection: found dish", dish, "with ID", id)
-            return True, dish
+            dish_copy = dish.copy()
+            del dish_copy["_id"]  # Remove the internal Mongo ID
+            print("DishCollection: found dish", dish_copy, "with ID", id)
+            return True, dish_copy
 
         print("DishCollection: did not find ID", id)
         return False, None
@@ -124,9 +125,10 @@ class DishCollection:
 
         dish = self.dishes.find_one({"name": name})
         if dish:
-            del dish["_id"]  # Remove the internal Mongo ID
-            print("DishCollection: found dish", dish, "with name", name)
-            return True, dish
+            dish_copy = dish.copy()
+            del dish_copy["_id"]  # Remove the internal Mongo ID
+            print("DishCollection: found dish", dish_copy, "with name", name)
+            return True, dish_copy
 
         print("DishCollection: did not find name", name)
         return False, None
@@ -198,9 +200,9 @@ class MealCollection:
         self.meals = db["meals"]  # Access the "meals" collection
 
         # Extract the meal with the highest ID value (most recently inserted)
-        latest_meal_id = self.meals.find_one(sort=[("_id", -1)])
+        latest_meal_id = self.meals.find_one(sort=[("ID", -1)])
         if latest_meal_id is not None:
-            self.opNum = latest_meal_id["_id"]
+            self.opNum = latest_meal_id["ID"]
         else:  # Initialize to 0 if there are no meals
             self.opNum = 0
 
@@ -214,8 +216,9 @@ class MealCollection:
         meals_list = []
         cursor = self.meals.find()  # Retrieve all documents from the collection
         for meal in cursor:
-            del meal["_id"]  # Remove internal Mongo ID
-            meals_list.append(meal)
+            meal_copy = meal.copy()
+            del meal_copy["_id"]  # Remove internal Mongo ID
+            meals_list.append(meal_copy)
 
         print(meals_list)
         return meals_list
@@ -228,7 +231,6 @@ class MealCollection:
         cursor = self.meals.find()  # Retrieve all documents from the collection
         for meal in cursor:
             delete_components = False
-            print(meal)
 
             # null out the dish ID that was deleted and associated with the meal
             if dish_id == meal["appetizer"]:
@@ -263,6 +265,7 @@ class MealCollection:
         meal = {
             "name": meal_name,
             "ID": self.opNum,
+            "_id": self.opNum,
             "appetizer": appetizer_id,
             "main": main_id,
             "dessert": dessert_id,
@@ -326,9 +329,10 @@ class MealCollection:
 
         meal = self.meals.find_one({"ID": id})
         if meal:
-            del meal["_id"]  # Remove the internal Mongo ID
-            print("MealCollection: found dish", meal, "with ID", id)
-            return True, meal
+            meal_copy = meal.copy()
+            del meal_copy["_id"]  # Remove the internal Mongo ID
+            print("MealCollection: found dish", meal_copy, "with ID", id)
+            return True, meal_copy
 
         print("DishCollection: did not find ID", id)
         return False, None
@@ -341,9 +345,10 @@ class MealCollection:
 
         meal = self.meals.find_one({"name": name})
         if meal:
-            del meal["_id"]  # Remove the internal Mongo ID
-            print("MealCollection: found dish", meal, "with name", name)
-            return True, meal
+            meal_copy = meal.copy()
+            del meal_copy["_id"]  # Remove the internal Mongo ID
+            print("MealCollection: found dish", meal_copy, "with name", name)
+            return True, meal_copy
 
         print("MealCollection: did not find name", name)
         return False, None
@@ -364,6 +369,7 @@ class MealCollection:
                 updated_meal = {
                     "name": meal_name,
                     "ID": id,
+                    "_id": id,
                     "appetizer": appetizer_id,
                     "main": main_id,
                     "dessert": dessert_id,
