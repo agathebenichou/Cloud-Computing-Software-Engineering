@@ -1,5 +1,6 @@
 import pymongo
 
+
 class DietCollection:
     """ DietCollection stores diets and performs operations on them
     The diets DB is a collection held in the "nutrition" database.
@@ -25,7 +26,7 @@ class DietCollection:
             self.opNum = 0
 
     def retrieveAllDiets(self):
-        """
+        """ Retrieve all diets from the collection
         :return: list of all old in the collection, excluding the "ID" key
         """
         print("DietCollection: retrieving all old:")
@@ -33,9 +34,10 @@ class DietCollection:
 
         cursor = self.diets.find()  # Retrieve all documents from the collection
         for diet in cursor:
-            diet_without_id = diet.copy()
-            del diet_without_id["_id"]
-            diets_list.append(diet_without_id)
+            #diet_without_id = diet.copy()
+            del diet["_id"]
+            diets_list.append(diet)
+
         print(diets_list)
         return diets_list
 
@@ -67,16 +69,16 @@ class DietCollection:
             print("Diet", diet_name, "was created successfully")
         return self.opNum
 
-
     def findDietName(self, name):
-        """
+        """ Find a diet by the name
         param name: the name of the diet
-        return: Boolean if diet was found and BSON object of the diet specified by its name
+        return: Boolean if diet was found and JSON object of the diet specified by its name
         """
 
         diet = self.diets.find_one({"name": name})  # Find the diet by name in the collection
 
         if diet is not None:
+            del diet["_id"]
             return True, diet
         else:
             return False, None
