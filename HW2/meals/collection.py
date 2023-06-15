@@ -373,8 +373,6 @@ class MealCollection:
 
                 updated_meal = {
                     "name": meal_name,
-                    "ID": id,
-                    "_id": id,
                     "appetizer": appetizer_id,
                     "main": main_id,
                     "dessert": dessert_id,
@@ -398,13 +396,15 @@ class MealCollection:
                             disheColl.extract_value(id=main_id, field="sugar"),
                             disheColl.extract_value(id=dessert_id, field="sugar")
                         ]
-                    )
+                    ),
+                    "ID": id,
+                    "_id": id,
                 }
 
                 # Replace with updated meal
                 self.meals.insert_one(updated_meal)
 
-                print(f"MealCollection: New meal {meal_name} added as ID={id}")
+                print(f"MealCollection: meal {meal_name} with ID={id} was updated")
                 return True, id
 
         # the key does not exist in the collection

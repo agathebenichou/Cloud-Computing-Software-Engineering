@@ -332,9 +332,8 @@ class MealsID(Resource):
 
     def put(self, id):
         """ Modifies a meal associated with a specific ID
-
         :param id: the ID of the meal to be modified
-        :return: the JSON object of the modified meal
+        :return: the ID of the modified meal
         """
 
         # if request content-type is not application/json
@@ -353,7 +352,7 @@ class MealsID(Resource):
             return 0, 415
         else:
 
-            # not all keys are present
+            # check if all the values were specified
             keys = ['name', 'appetizer', 'main', 'dessert']
             all_present = all(elem in keys for elem in data.keys())
 
@@ -369,12 +368,12 @@ class MealsID(Resource):
         dishes_exists = dishColl.checkDishes([appetizer_id, main_id, dessert_id])
         if dishes_exists:
 
-            # replace the word in the collection
+            # replace the meal in the collection
             b, w = mealColl.replaceMeal(id, meal_name, appetizer_id, main_id, dessert_id, dishColl)
-            if b: # return the word and HTTP 200 ok code
+            if b: # return boolean and HTTP 200 ok code
                 return w, 200
 
-            else: #return 0 for key and Not Found error code
+            else: # meal with ID=id wasn't found, return -5 and Not Found error code
                 return -5, 404
 
         else:  # one of the dish IDs does not exist
