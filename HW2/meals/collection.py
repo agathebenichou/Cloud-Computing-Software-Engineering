@@ -4,8 +4,8 @@ import pymongo
 
 class DishCollection:
     """ DishCollection stores the dishes and performs operations on them
-        Each dish is stored in a dictionary with a unique numerical key called id,
-        and a value of the following: dish name, calories, size (default 100g), sodium, suger
+    Each dish is stored in a dictionary with a unique numerical key called id,
+    and a value of the following: dish name, calories, size (default 100g), sodium, suger
     """
 
     def __init__(self):
@@ -14,21 +14,20 @@ class DishCollection:
         db = client["nutrition"]                                 # Access the database
 
         # Check if the "dishes" collection exists, create it if it doesn't
-        if "diets" not in db.list_collection_names():
+        if "dishes" not in db.list_collection_names():
             db.create_collection("dishes")
 
         self.dishes = db["dishes"]    # Access the "dishes" collection
 
+        # Extract the dish with the highest ID value (most recently inserted)
         latest_dish_id = self.dishes.find_one(sort=[("_id", -1)])
         if latest_dish_id is not None:
             self.opNum = latest_dish_id["_id"]
-        else:
+        else: # Initialize to 0 if there are no dishes
             self.opNum = 0
 
-
     def retrieveAllDishes(self):
-        """
-        Retrieve all dishes
+        """ Retrieve all dishes
         :return: list of all dishes in the collection
         """
 
@@ -37,17 +36,15 @@ class DishCollection:
 
         cursor = self.dishes.find()  # Retrieve all documents from the collection
         for dish in cursor:
-            dish_without_id = dish.copy()
-            del dish_without_id["_id"]
-            dishes_list.append(dish_without_id)
+            #dish_without_id = dish.copy()
+            del dish["_id"] # Remove the internal Mongo ID
+            dishes_list.append(dish)
 
         print(dishes_list)
         return dishes_list
 
-
     def insertDish(self, dish_name):
-        """
-        Insert a new dish based on dish name, using API Ninja/Nutrition
+        """ Insert a new dish based on dish name, using API Ninja/Nutrition
         param: dish_name
         return: ID of the new dish
         """
@@ -105,14 +102,14 @@ class DishCollection:
         return self.opNum
 
     def findDishID(self, id):
-        """
-        Return a single BSON object of the dish specified by its ID
+        """ Return a single BSON object of the dish specified by its ID
         :param id: the ID of the dish
         :return: BSON object of the dish
         """
 
         dish = self.dishes.find_one({"ID": id})
         if dish:
+            del dish["_id"]  # Remove the internal Mongo ID
             print("DishCollection: found dish", dish, "with ID", id)
             return True, dish
 
@@ -120,15 +117,14 @@ class DishCollection:
         return False, None
 
     def findDishName(self, name):
-        """
-        Return a single BSON object of the dish specified by its name
+        """ Return a single BSON object of the dish specified by its name
         param name: the name of the dish
         return: BSON object of the dish
         """
 
-
         dish = self.dishes.find_one({"name": name})
         if dish:
+            del dish["_id"]  # Remove the internal Mongo ID
             print("DishCollection: found dish", dish, "with name", name)
             return True, dish
 
@@ -137,7 +133,6 @@ class DishCollection:
 
     def delDishID(self, id):
         """ Deletes a dish with the corresponding ID
-
         :param id: dish ID to delete
         :return: True if deleted, False if not found
         """
@@ -151,7 +146,6 @@ class DishCollection:
 
     def delDishName(self, name):
         """ Deletes a dish with the corresponding name
-
         :param name: dish name to delete
         :return: True if deleted, False if not found
         """
@@ -164,8 +158,7 @@ class DishCollection:
         return False, None
 
     def checkDishes(self, list_of_ids):
-        """
-        Checks if all IDs in a list exist in dishes
+        """ Checks if all IDs in a list exist in dishes
         :params: list of dish IDs
         :return: True or False depending on results
         """
@@ -186,25 +179,45 @@ class DishCollection:
             return dish.get(field)  # Return the value of the specified field
         return None
 
+
 class MealCollection:
     """ MealCollection stores the dishes and performs operations on them
-        Each meal is stored in a dictionary with a unique numerical key called id,
-        and a value of the following: name, ID, appetizer, main, dessert, cal, sodium, sugar
+    Each meal is stored in a dictionary with a unique numerical key called id,
+    and a value of the following: name, ID, appetizer, main, dessert, cal, sodium, sugar
     """
 
     def __init__(self):
-        self.opNum = 0
-        self.meals = []
+
+        client = pymongo.MongoClient("mongodb://mongo:27017/")  # Connect to the MongoDB server
+        db = client["nutrition"]  # Access the database
+
+        # Check if the "meals" collection exists, create it if it doesn't
+        if "meals" not in db.list_collection_names():
+            db.create_collection("meals")
+
+        self.meals = db["meals"]  # Access the "meals" collection
+
+        # Extract the meal with the highest ID value (most recently inserted)
+        latest_meal_id = self.meals.find_one(sort=[("_id", -1)])
+        if latest_meal_id is not None:
+            self.opNum = latest_meal_id["_id"]
+        else:  # Initialize to 0 if there are no meals
+            self.opNum = 0
 
     def retrieveAllMeals(self):
-        """
-        Retrieve all dicts containing meals
+        """ Retrieve all dicts containing meals
         :return: list of all meals in the collection
         """
-        print("MealCollection: retrieving all meals:")
-        meals_list = [meal for meal in self.meals]
-        print(meals_list)
 
+        print("MealCollection: retrieving all meals:")
+
+        meals_list = []
+        cursor = self.meals.find()  # Retrieve all documents from the collection
+        for meal in cursor:
+            del meal["_id"]  # Remove internal Mongo ID
+            meals_list.append(meal)
+
+        print(meals_list)
         return meals_list
 
     def updateMeals(self, dish_id):
