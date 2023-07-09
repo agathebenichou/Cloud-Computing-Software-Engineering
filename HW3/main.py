@@ -25,14 +25,15 @@ api.add_resource(DishesID, '/dishes/<int:id>')
 # Associate the Resource /dishes/ID with the DishesName class
 api.add_resource(DishesName, '/dishes/<string:name>')
 
-# Associate the Resource /old with the Meals class
-api.add_resource(Meals, '/old')
+# Associate the Resource /meals with the Meals class
+api.add_resource(Meals, '/meals')
 
-# Associate the Resource /old/ID with the MealsID class
-api.add_resource(MealsID, '/old/<int:id>')
+# Associate the Resource /meals/ID with the MealsID class
+api.add_resource(MealsID, '/meals/<int:id>')
 
-# Associate the Resource /old/ID with the MealsName class
-api.add_resource(MealsName, '/old/<string:name>')
+# Associate the Resource /meals/ID with the MealsName class
+api.add_resource(MealsName, '/meals/<string:name>')
+
 
 
 if __name__ == '__main__':

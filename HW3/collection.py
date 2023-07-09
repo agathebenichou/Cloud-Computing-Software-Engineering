@@ -50,6 +50,8 @@ class DishCollection:
                     return -3
 
                 else:
+                    # Dish is valid, proceed to adding dish to collection
+                    self.opNum += 1  # increment latest operation number
 
                     # Iterate over all dishes to accumulate components
                     total_calories, total_sodium, total_sugar, total_serving_size = 0, 0, 0, 0
@@ -71,7 +73,6 @@ class DishCollection:
                     print(self.dishes)
                     print("DishCollection: dish ", dish_name, " was added")
 
-                    self.opNum += 1  # increment latest operation number
 
             else:
                 print(f"Api Ninja/Nutrition not reachable: {response.status_code}, {response.text}")
@@ -167,23 +168,22 @@ class MealCollection:
         # self.opNum is the number of insertMeal operations performed
         self.opNum = 0
 
-        # self.old is a dictionary of the form {key:meal} where key is an integer and meal is a list JSON objects
+        # self.meals is a dictionary of the form {key:meal} where key is an integer and meal is a list JSON objects
         self.meals = {}
 
 
     def retrieveAllMeals(self):
         """
-        Retrieve all dicts containing old
-        :return: dictionary of all old in the collection
+        Retrieve all dicts containing meals
+        :return: dictionary of all meals in the collection
         """
-        print("MealCollection: retrieving all old:")
+        print("MealCollection: retrieving all meals:")
         print(self.meals)
 
         return self.meals
 
     def updateMeals(self, dish_id):
-        """ Given a dish_id, update the old
-
+        """ Given a dish_id, update the meals
         :param dish_id: dish ID being deleted
         """
 
@@ -238,14 +238,14 @@ class MealCollection:
         """" Given a meal ID, delete it from the colleciton
 
         :params: the ID of a meal to delete
-        :returns: True if successfully deleted, False if not found
+        :returns: True if successfully deleted, False if not found and the meals ID
         """
 
         if id in self.meals.keys():  # the key exists in collection
             d = self.meals[id]
             del self.meals[id]
             print("MealCollection: deleted meal ", d, " with id ", id)
-            return True, d
+            return True, id
         else:
             return False, None  # the key does not exist in the collection
 
@@ -330,7 +330,7 @@ class MealCollection:
             }
             print("MealCollection: New meal for id ", id, " is ", self.meals[id])
 
-            return True, self.meals[id]
+            return True, id
 
         else:  # the key does not exist in the collection
             print("MealCollection: did not find id", id)

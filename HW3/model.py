@@ -5,8 +5,8 @@ from flask import request
 """
 The resources are:
 
-- /meals                            This is a collection class, containing all the old
-- /mealsID} or /meals/{name}      Each meal resource is expressed with a specific JSON object
+- /meals                            This is a collection class, containing all the meals
+- /meals/{ID} or /meals/{name}      Each meal resource is expressed with a specific JSON object
 - /dishes                           This is a collection class, containing all the dishes 
 - /dishes/{ID} or /dishes/{name}    Each dish resource is expressed with a specific JSON object
 """
@@ -113,13 +113,13 @@ class DishesID(Resource):
         """
 
         (status, dish_id) = dishColl.delDishID(id)
-        if status: # return deleted dish and HTTP 200 ok code
+        if status: # return deleted dish ID and HTTP 200 ok code
 
-            # update all old to delete dish ID
+            # Update meals that had the dish
             mealColl.updateMeals(dish_id)
 
             return dish_id, 200
-        else: # return 0 for id value (error) and Not Found error code
+        else:
             return -5, 404
 
 
@@ -142,9 +142,9 @@ class DishesName(Resource):
         """
 
         (status, dish_id) = dishColl.delDishName(name)
-        if status: # return deleted word and HTTP 200 ok code
+        if status: # return deleted dish ID and HTTP 200 ok code
 
-            # Update meal based off of
+            # Update meals that had the dish
             mealColl.updateMeals(dish_id)
 
             return dish_id, 200
@@ -168,11 +168,11 @@ class DishesName(Resource):
 mealColl = MealCollection()
 
 class Meals(Resource):
-    """ The Meal class implements the REST operations for the /old resource
+    """ The Meal class implements the REST operations for the /meals resource
 
-    /old
+    /meals
         POST (add a meal of the given name)
-        GET (return the JSON object listing all old, indexed by ID)
+        GET (return the JSON object listing all meals, indexed by ID)
     """
 
     global dishColl
@@ -188,9 +188,13 @@ class Meals(Resource):
 
     def post(self):
         """
-        Adds a meal to /old given a JSON object with fields: name, appetizer, main, dessert
+        Adds a meal to /meals given a JSON object with fields: name, appetizer, main, dessert
         :return: id: ID given to the created meal
         """
+
+        if request.headers is None:
+            print("Request Content-Type not specified in header")
+            return 0, 415
 
         # if request content-type is not application/json
         if 'Content-Type' not in dict(request.headers).keys():
@@ -201,30 +205,32 @@ class Meals(Resource):
                 print("Request Content-Type is not application/json")
                 return 0, 415
 
-        data = request.json
+        try:
+            data = request.json
+        except Exception as e:
+            print("Request Content-Type not specified in header")
+            return 0, 415
 
         # if body is not of type dict
         if type(data) != dict:
             return 0, 415
         else:
 
-            # not all keys are present
             keys = ['name', 'appetizer', 'main', 'dessert']
-            all_present = all(elem in keys for elem in data.keys())
+            all_present = all(elem in data.keys() for elem in keys)
 
-            if not all_present:
-                print(f"One of the required parameters was not specified")
-                return -1, 422
-            else:
+            if all_present:
                 meal_name = data['name']
                 appetizer_id = data['appetizer']
                 main_id = data['main']
                 dessert_id = data['dessert']
+            else:             # not all keys are present
+                return -1, 422
 
         dishes_exists = dishColl.checkDishes([appetizer_id, main_id, dessert_id])
         if dishes_exists:
 
-            # add meal to collection (after check for dish existence)
+            # add meal to collection (after checking for dish existence)
             key = mealColl.insertMeal(meal_name, appetizer_id, main_id, dessert_id, dishColl)
             if key == -2:  # meal already exists
                 return -2, 422
@@ -234,9 +240,9 @@ class Meals(Resource):
             return -6, 422
 
 class MealsID(Resource):
-    """ Implements the REST operations for the /old/{ID} resource
+    """ Implements the REST operations for the /meals/{ID} resource
 
-    /old/{ID}
+    /meals/{ID}
         GET (return the JSON object of the meal given the ID)
         DELETE (delete a meal of the given ID)
         PUT (add a meal of the given ID)
@@ -253,9 +259,9 @@ class MealsID(Resource):
         """
         b, w = mealColl.delMealID(id)
         if b:
-            return w, 200  # return deleted meal and HTTP 200 ok code
+            return w, 200  # return deleted meal ID and HTTP 200 ok code
         else:
-            return 5, 404  # return 0 for key value (error) and Not Found error code
+            return -5, 404  # if not found
 
     def get(self, id):
         """
@@ -293,7 +299,7 @@ class MealsID(Resource):
             return 0, 415
         else:
 
-            # not all keys are present
+            # check if all the values were specified
             keys = ['name', 'appetizer', 'main', 'dessert']
             all_present = all(elem in keys for elem in data.keys())
 
@@ -309,12 +315,12 @@ class MealsID(Resource):
         dishes_exists = dishColl.checkDishes([appetizer_id, main_id, dessert_id])
         if dishes_exists:
 
-            # replace the word in the collection
+            # replace the meal in the collection
             b, w = mealColl.replaceMeal(id, meal_name, appetizer_id, main_id, dessert_id, dishColl)
-            if b: # return the word and HTTP 200 ok code
+            if b: # return boolean and HTTP 200 ok code
                 return w, 200
 
-            else: #return 0 for key and Not Found error code
+            else: # meal with ID=id wasn't found, return -5 and Not Found error code
                 return -5, 404
 
         else:  # one of the dish IDs does not exist
@@ -322,9 +328,9 @@ class MealsID(Resource):
 
 
 class MealsName(Resource):
-    """ Implements the REST operations for the /old/{name} resource
+    """ Implements the REST operations for the /meals/{name} resource
 
-    /old/{name}
+    /meals/{name}
         GET (return the JSON object of the meal given the name)
         DELETE (delete a meal of the given name)
     """
