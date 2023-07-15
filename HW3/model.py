@@ -11,9 +11,7 @@ The resources are:
 - /dishes/{ID} or /dishes/{name}    Each dish resource is expressed with a specific JSON object
 """
 
-
 dishColl = DishCollection()
-
 
 class Dishes(Resource):
     """
@@ -27,18 +25,17 @@ class Dishes(Resource):
 
     def get(self):
         """
-        Retrieves a specific dish from the collection
-        :param key: the key used to search for a dish (either ID or name)
+        Retrieves all dishes from /dishes resource
+        :param key: None
         :return: JSON object listing all dishes (indexed by ID) and the status code
         """
-
         return dishColl.retrieveAllDishes(), 200
 
     def post(self):
         """
         Adds a dish to /dishes and returns its ID
         :param key: name used to add a dish
-        :return: id: dish ID given to the dish
+        :return: dish ID given to the dish
         """
 
         # if request content-type is not application/json
@@ -74,12 +71,9 @@ class Dishes(Resource):
 
     def delete(self):
         """ Deleting the entire collection is not allowed
-
         :return: return error message
         """
-
         return "This method is not allowed for request URL", 405
-
 
 class DishesID(Resource):
     """ Implements the REST operations for the /dishes/{ID} resource
@@ -93,16 +87,16 @@ class DishesID(Resource):
     global mealColl
 
     def get(self, id):
-        """ Retrieve a specific dish from the collection based off its ID
+        """ Retrieve a specific dish from the collection based on its ID
 
         :param id: the ID of the dish to retrieve
         :return: the dish JSON object and the status code
         """
 
         (status, dish_obj) = dishColl.findDishID(id)
-        if status: # return the word and HTTP 200 ok code
+        if status: # return the dish and HTTP 200 ok code
             return dish_obj, 200
-        else: # if dish not found
+        else:     # if dish not found
             return -5, 404
 
     def delete(self, id):
@@ -115,13 +109,12 @@ class DishesID(Resource):
         (status, dish_id) = dishColl.delDishID(id)
         if status: # return deleted dish ID and HTTP 200 ok code
 
-            # Update meals that had the dish
+            # Update meals that contain the dish
             mealColl.updateMeals(dish_id)
 
             return dish_id, 200
         else:
             return -5, 404
-
 
 class DishesName(Resource):
     """ Implements the REST operations for the /dishes/{name} resource
@@ -144,7 +137,7 @@ class DishesName(Resource):
         (status, dish_id) = dishColl.delDishName(name)
         if status: # return deleted dish ID and HTTP 200 ok code
 
-            # Update meals that had the dish
+            # Update meals that contain the dish
             mealColl.updateMeals(dish_id)
 
             return dish_id, 200
@@ -152,7 +145,7 @@ class DishesName(Resource):
             return -5, 404
 
     def get(self, name):
-        """ Retrieve a specific dish from the collection based off its ID
+        """ Retrieve a specific dish from the collection based on its name
 
         :param name: the name of the dish to retrieve
         :return: the dish and the status code
@@ -161,7 +154,7 @@ class DishesName(Resource):
         (status, dish_obj) = dishColl.findDishName(name)
         if status: # return the word and HTTP 200 ok code
             return dish_obj, 200
-        else: # return -5 for key and Not Found error code
+        else:      # return -5 for key and Not Found error code
             return -5, 404
 
 # create MealCollection instance with global scope
@@ -236,7 +229,7 @@ class Meals(Resource):
                 return -2, 422
             return key, 201
 
-        else:  # one of the dish IDs does not exist
+        else:              # one of the dish IDs does not exist
             return -6, 422
 
 class MealsID(Resource):
@@ -245,17 +238,17 @@ class MealsID(Resource):
     /meals/{ID}
         GET (return the JSON object of the meal given the ID)
         DELETE (delete a meal of the given ID)
-        PUT (add a meal of the given ID)
+        PUT (update a meal of the given ID)
     """
 
     global mealColl
     global dishColl
 
     def delete(self, id):
-        """ Delete a meal from the collection based off its ID
+        """ Delete a meal from the collection based on its ID
 
         :param id: the ID of the meal to delete
-        :return: the deleted meal and the status code
+        :return: the deleted meal ID and the status code
         """
         b, w = mealColl.delMealID(id)
         if b:
@@ -264,10 +257,10 @@ class MealsID(Resource):
             return -5, 404  # if not found
 
     def get(self, id):
-        """
-        Retrieve a specific meal from the collection based off its ID
+        """ Retrieve a specific meal from the collection based on its ID
+
         :param id: the ID of the meal to retrieve
-        :return: the meal and the status code
+        :return: JSON object of the meal and the status code
         """
 
         (b, m) = mealColl.findMealID(id)
@@ -280,7 +273,7 @@ class MealsID(Resource):
         """ Modifies a meal associated with a specific ID
 
         :param id: the ID of the meal to be modified
-        :return: the JSON object of the modified meal
+        :return: the ID the modified meal and the status code
         """
 
         # if request content-type is not application/json
@@ -318,7 +311,7 @@ class MealsID(Resource):
             # replace the meal in the collection
             b, w = mealColl.replaceMeal(id, meal_name, appetizer_id, main_id, dessert_id, dishColl)
             if b: # return boolean and HTTP 200 ok code
-                return w, 200
+                return id, 200
 
             else: # meal with ID=id wasn't found, return -5 and Not Found error code
                 return -5, 404
@@ -338,27 +331,27 @@ class MealsName(Resource):
     global mealColl
 
     def delete(self, name):
-        """ Delete a meal from the collection based off its name
+        """ Delete a meal from the collection based on its name
 
         :param name: the meal of the meal to delete
-        :return: the deleted meal and the status code
+        :return: the deleted meal ID and the status code
         """
 
         b, w = mealColl.delMealName(name)
         if b:
-            return w, 200  # return deleted word and HTTP 200 ok code
+            return w, 200  # return deleted meal ID and HTTP 200 ok code
         else:
-            return -5, 404  # return 0 for key value (error) and Not Found error code
+            return -5, 404  # return -5 for key value (error) and Not Found error code
 
     def get(self, name):
-        """ Retrieve a specific meal from the collection based off its ID
+        """ Retrieve a specific meal from the collection based on its name
 
-        :param id: the ID of the meal to retrieve
-        :return: the meal and the status code
+        :param name: the name of the meal to retrieve
+        :return: JSON object of the meal and the status code
         """
 
         (b, w) = mealColl.findMealName(name)
         if b:
-            return w, 200  # return the word and HTTP 200 ok code
+            return w, 200  # return the meal and HTTP 200 ok code
         else:
-            return -5, 404  # return 0 for key and Not Found error code
+            return -5, 404  # return -5 for key and Not Found error code

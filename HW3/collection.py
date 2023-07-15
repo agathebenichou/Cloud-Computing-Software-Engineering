@@ -207,7 +207,7 @@ class MealCollection:
     def insertMeal(self, meal_name, appetizer_id, main_id, dessert_id, disheColl):
         """"
         Insert a meal given the name and the corresponding dish IDs. To create a meal, it
-        computes the total numebr of calories, sodium, sugar.
+        computes the total number of calories, sodium, sugar.
 
         :param: meal name and component dish IDs
         :returns: the ID of the created meal
@@ -235,7 +235,7 @@ class MealCollection:
         return self.opNum
 
     def delMealID(self, id):
-        """" Given a meal ID, delete it from the colleciton
+        """" Given a meal ID, delete it from the collection
 
         :params: the ID of a meal to delete
         :returns: True if successfully deleted, False if not found and the meals ID
@@ -271,7 +271,7 @@ class MealCollection:
         """
 
         id_to_delete = None
-        for id, meal in self.meals.items(): #search for the meal ID given the name
+        for id, meal in self.meals.items(): # search for the meal ID given the name
             if meal["name"] == name:
                 id_to_delete = id
                 break
@@ -286,14 +286,14 @@ class MealCollection:
             return False, None
 
     def findMealName(self, name):
-        """
-         Returns a single JSON object of the meal specified by its name
+        """Returns a single JSON object of the meal specified by its name
+
          param name: the name of the meal
          return: value of the meal
          """
 
         fetch_id = None
-        for id, meal in self.meals.items(): #search for the meal ID given the name
+        for id, meal in self.meals.items(): # search for the meal ID given the name
             if meal["name"] == name:
                 fetch_id = id
                 break
@@ -309,7 +309,7 @@ class MealCollection:
         """ Given a meal ID, replaces the meal components with the new meal name and component IDs
 
         :params: ID of meal to replace and new components (name and IDs)
-        :returns: True if updated, False if meal was not in collection
+        :returns: True  and ID if updated, False and None if meal was not in collection
         """
 
         if id in self.meals.keys():  # the key exists in collection
