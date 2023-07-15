@@ -1,0 +1,32 @@
+name: assignment3
+on:
+  push:
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
+    - name: Build and export
+      uses: docker/build-push-action@v3
+      with:
+        context: HW3
+        file: HW3/Dockerfile
+        tags: meals:latest
+        outputs: type=docker,dest=/tmp/image.tar
+    - name: Upload artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: meals_service
+        path: /tmp/image.tar
+
+#  test:
+#    runs-on: ubuntu-latest
+#    steps:
+#  query:
+#    runs-on: ubuntu-latest
+#    steps:
+
+
