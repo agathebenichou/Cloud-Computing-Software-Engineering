@@ -5,8 +5,8 @@ from flask_restful import Api
 """ 
 This RESTful API allows users to:
 - Create and store dishes
-- Create and store old by specifying 3 dishes that comprise that meal (appetizer, main, dessert)
-- Retrieve, update, delete dishes and old 
+- Create and store meals by specifying 3 dishes that comprise that meal (appetizer, main, dessert)
+- Retrieve, update, delete dishes and meals 
 
 """
 

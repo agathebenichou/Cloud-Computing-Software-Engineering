@@ -106,10 +106,10 @@ class DishesID(Resource):
             return -5, 404
 
     def delete(self, id):
-        """ Delete a dish from the collection based off its ID
+        """ Delete a dish from the collection based on its ID
 
         :param id: the ID of the dish to delete
-        :return: the deleted dish ID and the status code
+        :return: the deleted dish ID and status code
         """
 
         (status, dish_id) = dishColl.delDishID(id)
@@ -135,10 +135,10 @@ class DishesName(Resource):
     global mealColl
 
     def delete(self, name):
-        """ Delete a dish from the collection based off its name
+        """ Delete a dish from the collection based on its name
 
-        :param name: the nsmr of the dish to delete
-        :return: the deleted dish and the status code
+        :param name: the name of the dish to delete
+        :return: the deleted dish id and status code
         """
 
         (status, dish_id) = dishColl.delDishName(name)
@@ -148,7 +148,7 @@ class DishesName(Resource):
             mealColl.updateMeals(dish_id)
 
             return dish_id, 200
-        else: # return 0 for key value (error) and Not Found error code
+        else: # return -5 for key value (error) and Not Found error code
             return -5, 404
 
     def get(self, name):
@@ -161,7 +161,7 @@ class DishesName(Resource):
         (status, dish_obj) = dishColl.findDishName(name)
         if status: # return the word and HTTP 200 ok code
             return dish_obj, 200
-        else: # return 0 for key and Not Found error code
+        else: # return -5 for key and Not Found error code
             return -5, 404
 
 # create MealCollection instance with global scope

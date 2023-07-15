@@ -187,17 +187,17 @@ class MealCollection:
         :param dish_id: dish ID being deleted
         """
 
-        for id, meal in self.meals.items(): # iterate over all dishes in a meal
+        for id, meal in self.meals.items(): # iterate over meals
             delete_components = False
 
             # null out the dish ID that was deleted and associated with the meal
             if dish_id == meal["appetizer"]:
                 meal["appetizer"] = None
                 delete_components = True
-            elif dish_id == meal["main"]:
+            if dish_id == meal["main"]:
                 meal["main"] = None
                 delete_components = True
-            elif dish_id["dessert"]:
+            if dish_id == meal["dessert"]:
                 dish_id["dessert"] = None
                 delete_components = True
 
