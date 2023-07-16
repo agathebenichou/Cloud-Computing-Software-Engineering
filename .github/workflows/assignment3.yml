@@ -30,7 +30,7 @@ jobs:
     - name: Download image artifact from previous job
       uses: actions/download-artifact@v3  # downloads all artifacts
     - name: Load Docker image
-      run: docker load --input /tmp/image.tar
+      run: docker load --input tmp/image.tar
     - name: check meals image is loaded
       run: docker image ls
     - name: run image in container
@@ -51,7 +51,7 @@ jobs:
     #      3. run pytest tests and check results
     - name: Test with pytest
       run: |
-        cd /tests
+        cd tests
         pytest -v  assn3_tests.py > assn3_test_results.txt
     - name: upload test results
       if: always()  # always perform this step even if tests fail, to see results
