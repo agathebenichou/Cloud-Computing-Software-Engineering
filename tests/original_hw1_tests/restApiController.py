@@ -1,4 +1,3 @@
-import connectionController
 from assertions import *
 
 

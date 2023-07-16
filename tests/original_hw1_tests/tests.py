@@ -1,5 +1,3 @@
-import connectionController
-from assertions import *
 import database
 from restApiController import *
 
