@@ -19,7 +19,7 @@ jobs:
     - name: Upload artifact
       uses: actions/upload-artifact@v3
       with:
-        name: meals_service
+        name: meals_image
         path: /tmp/image.tar
 
 #  test:
