@@ -1,6 +1,6 @@
 from restApiController import *
 
-# tests if POST /dishes is valid (201 status_code and all have different IDs)
+# tests if POST /dishes returns different ID's and a 201 status_code
 def test_1():
     dish_ids = []
 
@@ -21,14 +21,16 @@ def test_2():
     assert_err_code(response, error_code=200)
     assert 0.9 <= response.json()["sodium"] <= 1.1
 
-# tests if GET /dishes return all 3 dishes and status_code 200
+
+# tests if GET /dishes returns all 3 dishes and status_code 200
 def test_3():
     response = connectionController.http_get("dishes")
     dishes = response.json()
     assert_err_code(response, error_code=200)
     assert len(dishes) == 3
 
-# tests if POST /dishes/"blah" return -3 and status code 404,400 or 422
+
+# tests if POST /dishes/"blah" returns -3 and status_code 404, 400 or 422
 def test_4():
     dish = {"name": "blah"}
     response = connectionController.http_post("dishes",  dish)
@@ -36,4 +38,43 @@ def test_4():
     assert_ret_value(response, returned_value=-3)
 
 
+# tests if POST /dishes with an existing dish returnss -2 and status_code 400, 404 or 422
+def test_5():
+    dish = {"name": "orange"}
+    response = connectionController.http_post("dishes",  dish)
+    assert response.status_code in [404, 400, 422]
+    assert_ret_value(response, returned_value=-2)
+
+
+# tests POST /meals return positive ID and status_code 201
+def test_6():
+    meal = {
+        "name": "delicious",
+        "appetizer": 1,
+        "main": 2,
+        "dessert": 3
+    }
+    response = connectionController.http_post("meals", meal)
+    assert response.status_code == 201
+    assert response.json() > 0
+
+
+# tests GET /meals returns 1 meal, calories is between 400 to 500 and status_code 200
+def test_7():
+    response = connectionController.http_get("meals")
+    assert_err_code(response, error_code=200)
+    assert len(response.json()) == 1
+    assert 400 <= response.json()["1"]["cal"] <= 500
+
+# tests POST /meals with existing meal returns -2 and status_code 400 or 422
+def test_8():
+    meal = {
+        "name": "delicious",
+        "appetizer": 1,
+        "main": 2,
+        "dessert": 3
+    }
+    response = connectionController.http_post("meals", meal)
+    assert response.status_code in [400, 422]
+    assert_ret_value(response, returned_value=-2)
 
