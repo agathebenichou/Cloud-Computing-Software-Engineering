@@ -34,7 +34,7 @@ jobs:
       run: |
         if [[ steps.build-and-export.outputs.result == 'success' ]]; then
           echo -e "Line 3: image successfully built \n" >> log.txt
-        else;
+        else
           echo -e "Line 3: image not able to be built \n" >> log.txt
         fi
     - name: Upload log artifact
