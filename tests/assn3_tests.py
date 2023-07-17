@@ -1,4 +1,6 @@
-from restApiController import *
+from original_hw1_tests.restApiController import *
+
+# from restApiController import *
 
 # tests if POST /dishes returns different ID's and a 201 status_code
 def test_1():

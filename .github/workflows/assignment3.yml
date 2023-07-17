@@ -30,7 +30,7 @@ jobs:
     - name: Download image artifact from previous job
       uses: actions/download-artifact@v3  # downloads all artifacts
     - name: Load Docker image
-      run: docker load --input tmp/image.tar
+      run: docker load --input /tmp/meals_image.tar
     - name: check meals image is loaded
       run: docker image ls
     - name: run image in container
