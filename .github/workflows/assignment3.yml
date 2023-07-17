@@ -52,7 +52,7 @@ jobs:
     - name: Test with pytest
       run: |
         cd tests
-        pytest -v assn3_tests.py 
+        pytest -v assn3_tests.py 2>&1 | tee assn3_test_results.txt
     - name: upload test results
       if: always()  # always perform this step even if tests fail, to see results
       uses: actions/upload-artifact@v3
