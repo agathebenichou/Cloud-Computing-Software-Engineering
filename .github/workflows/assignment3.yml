@@ -15,12 +15,12 @@ jobs:
         context: HW3
         file: HW3/Dockerfile
         tags: meals:latest
-        outputs: type=docker,dest=/tmp/image.tar
+        outputs: type=docker,dest=image.tar
     - name: Upload artifact
       uses: actions/upload-artifact@v3
       with:
         name: meals_image
-        path: /tmp/image.tar
+        path: image.tar
 
   test:
     needs: build
@@ -30,7 +30,7 @@ jobs:
     - name: Download image artifact from previous job
       uses: actions/download-artifact@v3  # downloads all artifacts
     - name: Load Docker image
-      run: docker load --input /tmp/meals_image.tar
+      run: docker load --input meals_image/image.tar
     - name: check meals image is loaded
       run: docker image ls
     - name: run image in container
@@ -52,7 +52,7 @@ jobs:
     - name: Test with pytest
       run: |
         cd tests
-        pytest -v  assn3_tests.py > assn3_test_results.txt
+        pytest -v assn3_tests.py 
     - name: upload test results
       if: always()  # always perform this step even if tests fail, to see results
       uses: actions/upload-artifact@v3
@@ -61,9 +61,27 @@ jobs:
         path: tests/assn3_test_results.txt
 
 
-
 #  query:
+#    needs: test
 #    runs-on: ubuntu-latest
 #    steps:
-
-
+#      - name: Checkout
+#        uses: actions/checkout@v2
+#      - name: Download artifact
+#        uses: actions/download-artifact@v3
+#      - name: Load Docker image
+#        run: docker load --input meals_image/image.tar
+#      - name: Run image in container
+#        run: docker run -d -p 8000:8000 meals:latest
+#      - name: Execute Queries and Store Responses
+#        run: |
+#          while IFS= read -r line
+#          do
+#            response=$(curl -X POST -H "Content-Type: application/json" -d '{"dish":"'$line'"}' http://localhost:8000/query)
+#            echo "$line contains $response" >> response.txt
+#          done < query.txt
+#      - name: Upload Response File as Artifact
+#        uses: actions/upload-artifact@v3
+#      with:
+#          name: response
+#          path: response.txt
