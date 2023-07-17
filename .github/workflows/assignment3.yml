@@ -15,12 +15,12 @@ jobs:
         context: HW3
         file: HW3/Dockerfile
         tags: meals:latest
-        outputs: type=docker,dest=/tmp/image.tar
+        outputs: type=docker,dest=image.tar
     - name: Upload artifact
       uses: actions/upload-artifact@v3
       with:
         name: meals_image
-        path: tmp/image.tar
+        path: image.tar
 
   test:
     needs: build
@@ -30,7 +30,7 @@ jobs:
     - name: Download image artifact from previous job
       uses: actions/download-artifact@v3  # downloads all artifacts
     - name: Load Docker image
-      run: docker load --input tmp/image.tar
+      run: docker load --input image.tar
     - name: check meals image is loaded
       run: docker image ls
     - name: run image in container
