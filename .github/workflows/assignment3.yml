@@ -9,8 +9,8 @@ jobs:
     steps:
     - name: Create log file
       run: |
-        echo -e "Line 1: $(date)\n" >> log.txt
-        echo -e "Line 2: ${{ env.SUBMITTER_NAMES }}\n" >> log.txt
+        echo "Line 1: $(date)" >> log.txt
+        echo "Line 2: ${{ env.SUBMITTER_NAMES }}" >> log.txt
     - name: Checkout
       uses: actions/checkout@v3
     - name: Set up Docker Buildx
@@ -25,10 +25,10 @@ jobs:
         outputs: type=docker,dest=image.tar
     - name: Log if image was successfully built
       run: |
-        if [[ steps.build-and-export.outputs.result == 'success']]; then
-          echo -e "Line 3: image successfully built\n" >> log.txt
+        if [[ steps.build-and-export.outputs.result == 'success' ]]; then
+          echo "Line 3: image successfully built" >> log.txt
         else
-          echo -e "Line 3: image not able to be built\n" >> log.txt
+          echo "Line 3: image not able to be built" >> log.txt
         fi
     - name: Upload log artifact
       uses: actions/upload-artifact@v3
