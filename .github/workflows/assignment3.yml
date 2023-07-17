@@ -38,6 +38,21 @@ jobs:
       run: docker ps
     - name: Checkout
       uses: actions/checkout@v2
+
+    #    1. download image and run it in a container
+    - name: Download image artifact from previous job
+      uses: actions/download-artifact@v3  # downloads all artifacts
+    - name: Load Docker image
+      run: docker load --input tmp/image.tar
+    - name: check meals image is loaded
+      run: docker image ls
+    - name: run image in container
+      run: docker run -d -p 8000:8000 meals:latest
+    - name: Check container is running
+      run: docker ps
+    #     2. set up python and pytest environment
+    - name: Checkout
+      uses: actions/checkout@v3
     - name: Set up Python
       uses: actions/setup-python@v4
     - name: Install dependencies
@@ -70,6 +85,21 @@ jobs:
         ${{ secrets.HW3_SECRET }}/meals:${{ env.DATE }}
         docker push \
         ${{ secrets.HW3_SECRET }}/meals:${{ env.DATE }}
+        pip install pytest 
+        pip install requests
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+    #      3. run pytest tests and check results
+    - name: Test with pytest
+      run: |
+        cd tests
+        pytest -v  assn3_tests.py > assn3_test_results.txt
+    - name: upload test results
+      if: always()  # always perform this step even if tests fail, to see results
+      uses: actions/upload-artifact@v3
+      with:
+        name: assn3_test_results
+        path: tests/assn3_test_results.txt
+
 
   query:
     needs: test
