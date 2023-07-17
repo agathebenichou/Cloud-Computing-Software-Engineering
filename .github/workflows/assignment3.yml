@@ -4,7 +4,13 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      SUBMITTER_NAMES: Adam Vinestock, Aggie Benichou
     steps:
+    - name: Create log file
+      run: |
+        echo "Line 1: $(date)" > log.txt
+        echo "Line 2: ${{ env.SUBMITTER_NAMES }}" >> log.txt
     - name: Checkout
       uses: actions/checkout@v3
     - name: Set up Docker Buildx
@@ -16,11 +22,20 @@ jobs:
         file: HW3/Dockerfile
         tags: meals:latest
         outputs: type=docker,dest=image.tar
-    - name: Upload artifact
+    - name: Check if image was successfully built
+      run: |
+        if [[ ${{ steps.build-and-export.outputs.result }} == "success" ]]; then
+          echo "Line 3: image successfully built" >> log.txt
+        else
+          echo "Line 3: image not able to be built" >> log.txt
+        fi
+    - name: Upload artifacts
       uses: actions/upload-artifact@v3
       with:
-        name: meals_image
-        path: image.tar
+        name: artifacts
+        path: |
+          log.txt
+          image.tar
 
   test:
     needs: build
@@ -30,7 +45,7 @@ jobs:
     - name: Download image artifact from previous job
       uses: actions/download-artifact@v3  # downloads all artifacts
     - name: Load Docker image
-      run: docker load --input meals_image/image.tar
+      run: docker load --input artifacts/image.tar
     - name: check meals image is loaded
       run: docker image ls
     - name: run image in container
