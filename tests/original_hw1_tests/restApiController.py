@@ -1,4 +1,4 @@
-from assertions import *
+from .assertions import *
 from connectionController import http_post
 
 
