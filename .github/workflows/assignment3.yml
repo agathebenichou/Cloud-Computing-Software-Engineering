@@ -49,17 +49,13 @@ jobs:
       if: always()
       with:
         name: log_artifact
-        path: log.txt
+        path: build_log.txt
 
 
   test:
     needs: build
     runs-on: ubuntu-latest
     steps:
-    - name: Download log artifact from build job
-      uses: actions/download-artifact@v3
-      with:
-        name: log_artifact
     #    1. download image and run it in a container
     - name: Download image artifact from previous job
       uses: actions/download-artifact@v3  # downloads all artifacts
@@ -121,16 +117,12 @@ jobs:
       if: always()
       with:
         name: log_artifact
-        path: log.txt
+        path: test_log.txt
 
   query:
     needs: test
     runs-on: ubuntu-latest
     steps:
-    - name: Download log artifact from test job
-      uses: actions/download-artifact@v3
-      with:
-        name: log_artifact
     - name: Checkout Repo
       uses: actions/checkout@v3
     - name: Logging
@@ -211,4 +203,4 @@ jobs:
       if: always()
       with:
         name: log_artifact
-        path: log.txt
+        path: query_log.txt
