@@ -115,12 +115,16 @@ jobs:
         with open('query.txt') as f_in, open('response.txt', 'w') as f_out:
             for line in f_in:
                 food_item = line.strip()
-                print(food_item)
+
                 data = json.dumps({'name': food_item})
                 post_response = requests.post(url=f'{URL}/{resource}', headers=headers, data=data)
-                print(post_response.json())
+                dish_id = post_response.json()
+                print(dish_id)
+        
                 get_response = requests.get(url=f'{URL}/{resource}', headers=headers)
-                print(get_response.text) 
+                print(get_response.json())
+                print(get_response.json()[dish_id])
+                dish_response = get_response.json()[dish_id]
                 print(get_response.json())
                 f_out.write(f'{food_item} contains {get_response.json()[\"cal\"]} calories, {get_response.json()[\"sodium\"]} mgs of sodium, and {get_response.json()[\"sugar\"]} grams of sugar\\n')
         "
