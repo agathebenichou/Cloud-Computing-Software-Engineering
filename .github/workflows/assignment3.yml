@@ -116,10 +116,9 @@ jobs:
             for line in f_in:
                 food_item = line.strip()
                 print(food_item)
-                data = json.dumps({'dish': food_item})
+                data = json.dumps({'name': food_item})
                 post_response = requests.post(url=f'{URL}/{resource}', headers=headers, data=data)
                 print(post_response)
-                print(post_response.status_code)
                 print(post_response.text) 
                 get_response = requests.get(url=f'{URL}/{resource}', headers=headers)
                 print(get_response)
