@@ -118,14 +118,14 @@ jobs:
 
                 data = json.dumps({'name': food_item})
                 post_response = requests.post(url=f'{URL}/{resource}', headers=headers, data=data)
-                dish_id = post_response.json()
+                dish_id = str(post_response.json())
                 print(dish_id)
         
                 get_response = requests.get(url=f'{URL}/{resource}', headers=headers)
                 print(get_response.json())
                 print(get_response.json()[dish_id])
                 dish_response = get_response.json()[dish_id]
-                print(get_response.json())
+                print(dish_response.json())
                 f_out.write(f'{food_item} contains {get_response.json()[\"cal\"]} calories, {get_response.json()[\"sodium\"]} mgs of sodium, and {get_response.json()[\"sugar\"]} grams of sugar\\n')
         "
     - name: Upload Response File as Artifact
