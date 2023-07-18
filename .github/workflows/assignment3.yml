@@ -9,8 +9,8 @@ jobs:
     steps:
     - name: Create log file
       run: |
-        echo "Line 1: $(date)" > log.txt
-        echo "Line 2: ${{ env.SUBMITTER_NAMES }}" > log.txt
+        echo "Line 1: $(date)" >> $GITHUB_LOG
+        echo "Line 2: ${{ env.SUBMITTER_NAMES }}" >> $GITHUB_LOG
     - name: Checkout
       uses: actions/checkout@v3
     - name: Set up Docker Buildx
@@ -23,13 +23,15 @@ jobs:
         file: HW3/Dockerfile
         tags: meals:latest
         outputs: type=docker,dest=image.tar
-    - name: Log if image was successfully built
+    - name: Log success of building image
       run: |
         if [[ ${{ steps.build-and-export.outcome }} == 'success' ]]; then
-          echo "Line 3: image successfully built" > log.txt
+          echo "Line 3: image successfully built" >> $GITHUB_LOG
         else
-          echo "Line 3: image not able to be built" > log.txt
+          echo "Line 3: image not able to be built" >> $GITHUB_LOG
         fi
+    - name: Save accumulated logs to log file
+      run: $GITHUB_LOG >> log.txt
     - name: Upload log artifact
       uses: actions/upload-artifact@v3
       if: always()
