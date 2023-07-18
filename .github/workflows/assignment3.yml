@@ -88,7 +88,7 @@ jobs:
     - name: Download image artifact from previous job
       uses: actions/download-artifact@v3
       with:
-        name: meals_image
+        name: image_artifact
     - name: Load Docker image
       run: docker load --input image_artifact/image.tar
     - name: Run image in container
