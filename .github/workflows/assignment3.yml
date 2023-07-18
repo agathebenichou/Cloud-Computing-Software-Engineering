@@ -5,7 +5,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      SUBMITTER_NAMES: Adam Vinestock, Aggie Benichou
+      SUBMITTER_NAMES: Adam Vinestock, Agathe Benichou
     steps:
     - name: Create log file
       run: |
