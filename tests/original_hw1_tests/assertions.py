@@ -1,5 +1,5 @@
 import requests
-from connectionController import *
+from .connectionController import *
 
 
 def assert_err_code(response: requests.Response, error_code: int):

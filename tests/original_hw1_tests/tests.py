@@ -1,6 +1,6 @@
 import database
-from restApiController import *
-from connectionController import *
+from .restApiController import *
+from .connectionController import *
 
 # tests for dish API
 

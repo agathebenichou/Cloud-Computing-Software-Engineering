@@ -1,5 +1,5 @@
 from .assertions import *
-from connectionController import http_post
+from .connectionController import http_post
 
 
 def add_dish(name: str) -> int:

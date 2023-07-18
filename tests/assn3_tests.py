@@ -68,6 +68,7 @@ def test_7():
     assert len(response.json()) == 1
     assert 400 <= response.json()["1"]["cal"] <= 500
 
+
 # tests POST /meals with existing meal returns -2 and status_code 400 or 422
 def test_8():
     meal = {
