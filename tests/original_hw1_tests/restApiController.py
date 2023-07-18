@@ -1,4 +1,4 @@
-from assertions import *
+from .assertions import *
 
 
 def add_dish(name: str) -> int:
