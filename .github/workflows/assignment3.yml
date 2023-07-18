@@ -122,11 +122,9 @@ jobs:
                 print(dish_id)
         
                 get_response = requests.get(url=f'{URL}/{resource}', headers=headers)
-                print(get_response.json())
-                print(get_response.json()[dish_id])
                 dish_response = get_response.json()[dish_id]
                 print(dish_response.json())
-                f_out.write(f'{food_item} contains {get_response.json()[\"cal\"]} calories, {get_response.json()[\"sodium\"]} mgs of sodium, and {get_response.json()[\"sugar\"]} grams of sugar\\n')
+                f_out.write(f'{food_item} contains {dish_response.json()[\"cal\"]} calories, {dish_response.json()[\"sodium\"]} mgs of sodium, and {dish_response.json()[\"sugar\"]} grams of sugar\\n')
         "
     - name: Upload Response File as Artifact
       uses: actions/upload-artifact@v3
