@@ -1,4 +1,4 @@
-from original_hw1_tests.restApiController import *
+from tests.original_hw1_tests.restApiController import *
 
 # from restApiController import *
 
