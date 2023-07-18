@@ -118,7 +118,7 @@ jobs:
                 print(food_item)
                 data = json.dumps({'name': food_item})
                 post_response = requests.post(url=f'{URL}/{resource}', headers=headers, data=data)
-
+                print(post_response.json())
                 get_response = requests.get(url=f'{URL}/{resource}', headers=headers)
                 print(get_response.text) 
                 print(get_response.json())
