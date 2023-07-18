@@ -106,7 +106,9 @@ jobs:
         with open('query.txt') as f_in, open('response.txt', 'w') as f_out:
             for line in f_in:
                 food_item = line.strip()
+                print(food_item)
                 response = requests.post('http://127.0.0.1:8000/dishes', json={'dish': food_item})
+                print(response)
                 print(response.status_code) #prints the status code
                 print(response.text) #prints the response text
                 f_out.write(f'{food_item} contains {response.json()[\"calories\"]} calories, {response.json()[\"sodium\"]} mgs of sodium, and {response.json()[\"sugar\"]} grams of sugar\\n')
