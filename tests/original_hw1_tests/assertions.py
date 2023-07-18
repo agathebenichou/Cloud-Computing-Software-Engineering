@@ -36,7 +36,7 @@ def assert_meal(meal: {}):
 
 
 def assert_not_existed_meal(meal_identifier: any) -> None:
-    response = connectionController.http_get(f"meals/{meal_identifier}")
+    response = http_get(f"meals/{meal_identifier}")
     assert_err_code(response, error_code=404)
     assert_ret_value(response, returned_value=-5)
 
