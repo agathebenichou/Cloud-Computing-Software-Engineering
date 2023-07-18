@@ -51,9 +51,9 @@ jobs:
       uses: actions/download-artifact@v3  # downloads all artifacts
     - name: Load Docker image
       run: docker load --input image_artifact/image.tar
-    - name: check meals image is loaded
+    - name: Check meals image is loaded
       run: docker image ls
-    - name: run image in container
+    - name: Run image in container
       run: docker run -d -p 8000:8000 meals:latest
     - name: Check container is running
       run: docker ps
@@ -83,15 +83,13 @@ jobs:
     needs: test
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout
+    - name: Checkout Repo into Runner
       uses: actions/checkout@v3
     - name: Download image artifact from previous job
-      uses: actions/download-artifact@v3
-      with:
-        name: image_artifact
-    - name: Load Docker image
+      uses: actions/download-artifact@v3  # downloads all artifacts
+    - name: Load artifact Docker image
       run: docker load --input image_artifact/image.tar
-    - name: Run image in container
+    - name: Run Docker image in container
       run: docker run -d -p 8000:8000 meals:latest
     - name: Set up Python
       uses: actions/setup-python@v4
