@@ -15,7 +15,8 @@ jobs:
 
     - name: Create log file
       run: |
-        echo "$(date --iso-8601=minutes)" > log.txt
+      #  echo "$(date --iso-8601=minutes)" > log.txt
+        echo "$(date)" > /tmp/log.txt
         echo "${{ env.SUBMITTER_NAMES }}" >> /tmp/log.txt
 
     - name: Set up Docker Buildx
@@ -34,7 +35,7 @@ jobs:
       if: always()
       run: |
         if [[ ${{ steps.build-and-export.outcome }} == 'success' ]]; then
-          echo "Line 3: image successfully built" >> /tmp/log.txt
+          echo "image successfully built" >> /tmp/log.txt
         else
           echo "image not able to be built" >> /tmp/log.txt
         fi
@@ -58,11 +59,11 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
-    - name: Download log artifact from previous job
-      uses: actions/download-artifact@v3
-      with:
-        name: log_artifact
-        path: /tmp
+#    - name: Download log artifact from previous job
+#      uses: actions/download-artifact@v3
+#      with:
+#        name: log_artifact
+#        path: /tmp
 
     - name: Download image artifact from previous job
       uses: actions/download-artifact@v3
