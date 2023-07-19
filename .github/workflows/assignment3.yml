@@ -2,6 +2,8 @@ name: assignment3
 on:
   push:
 jobs:
+
+  # Build Job: Builds the image for the meals service
   build:
     runs-on: ubuntu-latest
     env:
@@ -9,7 +11,7 @@ jobs:
     steps:
     - name: Create log file
       run: |
-        echo "$(date)" >> log.txt
+        echo "$(date)" >> /tmp/log.txt
         echo "${{ env.SUBMITTER_NAMES }}" >> /tmp/log.txt
     - name: Checkout
       uses: actions/checkout@v3
@@ -40,7 +42,7 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: image_artifact
-        path: image.tar
+        path: /tmp/image.tar
     - name: Logging
       run: | 
         echo "Build Job: Uploaded image artifact" >> log.txt
@@ -51,14 +53,16 @@ jobs:
         name: log_artifact
         path: /tmp/log.txt
 
-
+  # Test Job: Uses the image from the Build Job to run it in a container, uses pytest to test the service
   test:
     needs: build
     runs-on: ubuntu-latest
     steps:
-    #    1. download image and run it in a container
     - name: Download image artifact from previous job
       uses: actions/download-artifact@v3  # downloads all artifacts
+      with:
+        name: image_artifact
+        path: /tmp
     - name: Download logs
       uses: actions/download-artifact@v3
       with:
@@ -68,7 +72,8 @@ jobs:
       run: | 
         echo "Test Job: Downloaded image artifact" >> /tmp/log.txt
     - name: Load Docker image
-      run: docker load --input image_artifact/image.tar
+      run: docker load --input /tmp/image.tar
+      #image_artifact/image.tar
     - name: Logging
       run: | 
         echo "Test Job: Loading Docker image" >> /tmp/log.txt
@@ -113,7 +118,7 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: assn3_test_results
-        path: assn3_test_results.txt
+        path: /tmp/assn3_test_results.txt
     - name: Logging
       run: | 
         echo "Test Job: Uploaded test results" >> /tmp/log.txt
@@ -128,23 +133,26 @@ jobs:
     needs: test
     runs-on: ubuntu-latest
     steps:
+    - name: Checkout Repo
+      uses: actions/checkout@v3
     - name: Download logs
       uses: actions/download-artifact@v3
       with:
         name: log_artifact
         path: /tmp
-    - name: Checkout Repo
-      uses: actions/checkout@v3
     - name: Logging
       run: | 
         echo "Query Job: Checked out repository" >> /tmp/log.txt
     - name: Download image artifact from previous job
       uses: actions/download-artifact@v3
+      with:
+        name: image_artifact
+        path: /tmp
     - name: Logging
       run: | 
         echo "Query Job: Downloaded artifacts" >> /tmp/log.txt
     - name: Load artifact Docker image
-      run: docker load --input image_artifact/image.tar
+      run: docker load --input /tmp/image.tar
     - name: Logging
       run: | 
         echo "Query Job: Loaded artifact Docker image" >> /tmp/log.txt
@@ -213,4 +221,4 @@ jobs:
       if: always()
       with:
         name: log_artifact
-        path: log.txt
+        path: /tmp/log.txt
