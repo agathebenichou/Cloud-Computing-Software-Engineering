@@ -100,7 +100,7 @@ jobs:
 
     - name: Logging
       run: | 
-        echo "Test Job: Tests successed" >> /tmp/log.txt
+        echo "Test Job: Tests succeeded" >> /tmp/log.txt
 
     - name: Upload test results
       if: always()  # always perform this step even if tests fail, to see results
@@ -168,23 +168,8 @@ jobs:
                 f_out.write(f'{food_item} contains {dish_response[\"cal\"]} calories, {dish_response[\"sodium\"]} mgs of sodium, and {dish_response[\"sugar\"]} grams of sugar\\n')
         "
 
-    - name: Logging
-      run: | 
-        echo "Query Job: Built response file from query file" >> /tmp/log.txt
-
     - name: Upload Response File as Artifact
       uses: actions/upload-artifact@v3
       with:
           name: response
           path: response.txt
-
-    - name: Logging
-      run: |
-        echo "Query Job: Uploaded response file" >> /tmp/log.txt
-
-    - name: Upload log artifact
-      uses: actions/upload-artifact@v3
-      if: always()
-      with:
-        name: log_artifact
-        path: /tmp/log.txt
