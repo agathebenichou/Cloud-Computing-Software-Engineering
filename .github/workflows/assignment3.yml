@@ -42,7 +42,7 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: image_artifact
-        path: /tmp/image.tar
+        path: image.tar
     - name: Logging
       run: | 
         echo "Build Job: Uploaded image artifact" >> log.txt
@@ -62,7 +62,6 @@ jobs:
       uses: actions/download-artifact@v3  # downloads all artifacts
       with:
         name: image_artifact
-        path: /tmp
     - name: Download logs
       uses: actions/download-artifact@v3
       with:
@@ -72,7 +71,7 @@ jobs:
       run: | 
         echo "Test Job: Downloaded image artifact" >> /tmp/log.txt
     - name: Load Docker image
-      run: docker load --input /tmp/image.tar
+      run: docker load --input image_artifact/image.tar
       #image_artifact/image.tar
     - name: Logging
       run: | 
@@ -143,11 +142,8 @@ jobs:
     - name: Logging
       run: | 
         echo "Query Job: Checked out repository" >> /tmp/log.txt
-    - name: Download image artifact from previous job
-      uses: actions/download-artifact@v3
-      with:
-        name: image_artifact
-        path: /tmp
+    - name: Load Docker image
+      run: docker load --input image_artifact/image.tar
     - name: Logging
       run: | 
         echo "Query Job: Downloaded artifacts" >> /tmp/log.txt
