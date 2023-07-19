@@ -60,10 +60,6 @@ jobs:
       uses: actions/download-artifact@v3
       with:
         name: log_artifact
-    - name: Create log file
-      run: |
-        echo "$(date)" >> log.txt
-        echo "${{ env.SUBMITTER_NAMES }}" >> log.txt
     #    1. download image and run it in a container
     - name: Download image artifact from previous job
       uses: actions/download-artifact@v3  # downloads all artifacts
@@ -135,10 +131,6 @@ jobs:
       uses: actions/download-artifact@v3
       with:
         name: log_artifact
-    - name: Create log file
-      run: |
-        echo "$(date)" >> log.txt
-        echo "${{ env.SUBMITTER_NAMES }}" >> log.txt
     - name: Checkout Repo
       uses: actions/checkout@v3
     - name: Logging
