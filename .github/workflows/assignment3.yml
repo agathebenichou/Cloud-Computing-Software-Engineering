@@ -62,9 +62,9 @@ jobs:
         name: log_artifact
     - name: Logging
       run: | 
-        if [[ -f log_artifact/log.txt ]]; then
+        if [[ -f log.txt ]]; then
           echo 'here'
-          cat log_artifact/log.txt >> log.txt
+          cat log.txt >> log.txt
         fi
     #    1. download image and run it in a container
     - name: Download image artifact from previous job
@@ -139,9 +139,9 @@ jobs:
         name: log_artifact
     - name: Logging
       run: | 
-        if [[ -f log_artifact/log.txt ]]; then
+        if [[ -f log.txt ]]; then
           echo 'here'
-          cat log_artifact/log.txt >> log.txt
+          cat log.txt >> log.txt
         fi
     - name: Checkout Repo
       uses: actions/checkout@v3
