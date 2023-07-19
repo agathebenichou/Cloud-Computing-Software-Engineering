@@ -33,6 +33,7 @@ jobs:
         outputs: type=docker,dest=image.tar
 
     - name: Log success of building image
+      if: always()
       run: |
         if [[ ${{ steps.build-and-export.outcome }} == 'success' ]]; then
           echo "Line 3: image successfully built" >> /tmp/log.txt
