@@ -9,10 +9,6 @@ jobs:
     env:
       SUBMITTER_NAMES: Adam Vinestock, Agathe Benichou
     steps:
-#    - name: Create log file
-#      run: |
-#        echo "$(date)" > /tmp/log.txt
-#        echo "${{ env.SUBMITTER_NAMES }}" >> /tmp/log.txt
 
     - name: Checkout
       uses: actions/checkout@v3
@@ -32,7 +28,7 @@ jobs:
       uses: docker/build-push-action@v3
       with:
         context: HW3
-        file: HW3/Dockerfile
+        file: HW3/Dockerfileeee
         tags: meals:latest
         outputs: type=docker,dest=image.tar
 
@@ -49,10 +45,6 @@ jobs:
       with:
         name: image_artifact
         path: image.tar
-
-#    - name: Logging
-#      run: |
-#        echo "Build Job: Uploaded image artifact" >> /tmp/log.txt
 
     - name: Upload log artifact
       uses: actions/upload-artifact@v3
@@ -82,17 +74,13 @@ jobs:
     - name: Load Docker image
       run: docker load --input image_artifact/image.tar
 
-#    - name: Logging
-#      run: |
-#        echo "Test Job: Loaded Docker image" >> /tmp/log.txt
-
     - name: Run Docker image in container
       run: |
         docker run --rm -d -p 8000:8000 meals:latest
         if [ $? -eq 0 ]; then
-          echo "Line 4: container up and running" >> /tmp/log.txt
+          echo "Line 4: Container up and running" >> /tmp/log.txt
         else
-          echo "Line 4: container failed to run" >> /tmp/log.txt
+          echo "Line 4: Container failed to run" >> /tmp/log.txt
         fi
 
     - name: Checkout
