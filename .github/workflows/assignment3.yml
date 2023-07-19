@@ -69,7 +69,7 @@ jobs:
       uses: actions/download-artifact@v3
       with:
         name: log_artifact
-        path: /tmp/log.txt
+        path: /tmp
 
     - name: Download image artifact from previous job
       uses: actions/download-artifact@v3
