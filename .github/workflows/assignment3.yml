@@ -12,7 +12,7 @@ jobs:
 
     - name: Create log file
       run: |
-        echo "$(date)" >> /tmp/log.txt
+        echo "$(date)" > /tmp/log.txt
         echo "${{ env.SUBMITTER_NAMES }}" >> /tmp/log.txt
 
     - name: Checkout
@@ -76,9 +76,9 @@ jobs:
       run: |
         docker run --rm -d -p 8000:8000 meals:latest
         if [ $? -eq 0 ]; then
-          echo "Container up and running" >> /tmp/log.txt
+          echo "Test Job: Container up and running" >> /tmp/log.txt
         else
-          echo "Container failed to run" >> /tmp/log.txt
+          echo "Test Job: Container failed to run" >> /tmp/log.txt
         fi
 
     - name: Checkout
