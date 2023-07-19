@@ -58,11 +58,11 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
-#    - name: Download log artifact from previous job
-#      uses: actions/download-artifact@v3
-#      with:
-#        name: log_artifact
-#        path: /tmp
+    - name: Download log artifact from previous job
+      uses: actions/download-artifact@v3
+      with:
+        name: log_artifact
+        path: /tmp
 
     - name: Download image artifact from previous job
       uses: actions/download-artifact@v3
