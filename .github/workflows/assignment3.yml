@@ -15,7 +15,10 @@ jobs:
 
     - name: Create log file
       run: |
-        echo "$(date --iso-8601=minutes)" > /tmp/log.txt
+        echo "Line 0: $(date +'%Y-%m-%dT%H:%M%z')" > /tmp/log.txt
+        echo "Line 0: $(date +'%Y-%m-%d T %H:%M%z')" >> /tmp/log.txt
+        echo "Line 0: $(date --iso-8601=minutes)" >> /tmp/log.txt
+        echo "$(date --iso-8601=minutes)" >> /tmp/log.txt
         echo "${{ env.SUBMITTER_NAMES }}" >> /tmp/log.txt
 
     - name: Set up Docker Buildx
@@ -66,9 +69,9 @@ jobs:
 
     - name: Download image artifact from previous job
       uses: actions/download-artifact@v3
-#      with:
-#        name: image_artifact
-#        path: image.tar
+      with:
+        name: image_artifact
+        path: image_artifact
 
     - name: Load Docker image
       run: docker load --input image_artifact/image.tar
