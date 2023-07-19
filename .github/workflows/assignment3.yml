@@ -118,7 +118,7 @@ jobs:
       if: always()  # always perform this step even if tests fail, to see results
       uses: actions/upload-artifact@v3
       with:
-        name: assn3_test_results
+        name: assn3_test_results_artifact
         path: assn3_test_results.txt
 
     - name: Upload log artifact
