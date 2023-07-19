@@ -28,7 +28,7 @@ jobs:
       uses: docker/build-push-action@v3
       with:
         context: HW3
-        file: HW3/Dockerfileeee
+        file: HW3/Dockerfile
         tags: meals:latest
         outputs: type=docker,dest=image.tar
 
@@ -77,7 +77,7 @@ jobs:
 
     - name: Run Docker image in container
       run: |
-        docker run --rm -d -p 8000:8000 meals:latest
+        docker run --rm -d -p 8000:8000 mealsss:latest
         if [ $? -eq 0 ]; then
           echo "Line 4: Container up and running" >> /tmp/log.txt
         else
