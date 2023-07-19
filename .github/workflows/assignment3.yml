@@ -81,7 +81,7 @@ jobs:
     - name: Log success of running container
       if: always()
       run: | 
-        if [ $? -eq 0 ]; then
+        if docker ps | grep -q "meals:latest"; then
           echo "Line 4: Container up and running" >> /tmp/log.txt
         else
           echo "Line 4: Container failed to run" >> /tmp/log.txt
