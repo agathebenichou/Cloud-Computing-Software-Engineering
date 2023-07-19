@@ -9,14 +9,18 @@ jobs:
     env:
       SUBMITTER_NAMES: Adam Vinestock, Agathe Benichou
     steps:
+#    - name: Create log file
+#      run: |
+#        echo "$(date)" > /tmp/log.txt
+#        echo "${{ env.SUBMITTER_NAMES }}" >> /tmp/log.txt
+
+    - name: Checkout
+      uses: actions/checkout@v3
 
     - name: Create log file
       run: |
         echo "$(date)" > /tmp/log.txt
         echo "${{ env.SUBMITTER_NAMES }}" >> /tmp/log.txt
-
-    - name: Checkout
-      uses: actions/checkout@v3
 
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v2
@@ -61,9 +65,17 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
+    - name: Download log artifact from previous job
+      uses: actions/download-artifact@v3
+      with:
+        name: logs
+        path: /tmp
 
     - name: Download image artifact from previous job
       uses: actions/download-artifact@v3
+      with:
+        name: image_artifact
+        path: image.tar
 
     - name: Load Docker image
       run: docker load --input image_artifact/image.tar
