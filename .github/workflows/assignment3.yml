@@ -20,6 +20,7 @@ jobs:
     - name: Create log file
       run: |
         echo "Line 1: $(date +'%Y-%m-%dT%H:%M%z')" > log.txt
+        echo "Line 1: $(date)" >> /tmp/log.txt
         echo "Line 2: ${{ env.SUBMITTER_NAMES }}" >> /tmp/log.txt
 
     - name: Set up Docker Buildx
