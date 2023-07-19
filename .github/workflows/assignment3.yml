@@ -76,8 +76,10 @@ jobs:
       run: docker load --input image_artifact/image.tar
 
     - name: Run Docker image in container
-      run: |
-        docker run --rm -d -p 8000:8000 mealsss:latest
+      run: docker run --rm -d -p 8000:8000 mealsss:latest
+
+    - name: Log success of running container
+      run: | 
         if [ $? -eq 0 ]; then
           echo "Line 4: Container up and running" >> /tmp/log.txt
         else
