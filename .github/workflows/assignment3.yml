@@ -60,6 +60,9 @@ jobs:
       uses: actions/download-artifact@v3
       with:
         name: log_artifact
+    #    1. download image and run it in a container
+    - name: Download image artifact from previous job
+      uses: actions/download-artifact@v3  # downloads all artifacts
     - name: Logging
       run: | 
         if [[ -f log.txt ]]; then
@@ -72,11 +75,6 @@ jobs:
         else
           echo "log.txt does not exist"
         fi
-    #    1. download image and run it in a container
-    - name: Download image artifact from previous job
-      uses: actions/download-artifact@v3  # downloads all artifacts
-      with:
-        name: image_artifact
     - name: Logging
       run: | 
         echo "Test Job: Downloaded image artifact" >> log.txt
@@ -145,6 +143,13 @@ jobs:
       uses: actions/download-artifact@v3
       with:
         name: log_artifact
+    - name: Checkout Repo
+      uses: actions/checkout@v3
+    - name: Logging
+      run: | 
+        echo "Query Job: Checked out repository" >> log.txt
+    - name: Download image artifact from previous job
+      uses: actions/download-artifact@v3
     - name: Logging
       run: | 
         if [[ -f log.txt ]]; then
@@ -157,15 +162,6 @@ jobs:
         else
           echo "log.txt does not exist"
         fi
-    - name: Checkout Repo
-      uses: actions/checkout@v3
-    - name: Logging
-      run: | 
-        echo "Query Job: Checked out repository" >> log.txt
-    - name: Download image artifact from previous job
-      uses: actions/download-artifact@v3
-      with:
-        name: image_artifact
     - name: Logging
       run: | 
         echo "Query Job: Downloaded artifacts" >> log.txt
