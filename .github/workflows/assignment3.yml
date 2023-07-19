@@ -73,9 +73,9 @@ jobs:
 
     - name: Download image artifact from previous job
       uses: actions/download-artifact@v3
-      with:
-        name: image_artifact
-        path: image.tar
+#      with:
+#        name: image_artifact
+#        path: image.tar
 
     - name: Load Docker image
       run: docker load --input image_artifact/image.tar
