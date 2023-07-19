@@ -181,5 +181,5 @@ jobs:
     - name: Upload Response File as Artifact
       uses: actions/upload-artifact@v3
       with:
-          name: response
+          name: query_response_artifact
           path: response.txt
