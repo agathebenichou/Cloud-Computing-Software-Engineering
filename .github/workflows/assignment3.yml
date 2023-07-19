@@ -63,9 +63,9 @@ jobs:
     - name: Logging
       run: | 
         if [[ -f log_artifact/log.txt ]]; then
+          echo 'here'
           cat log_artifact/log.txt >> log.txt
         fi
-        echo "This Job: First action" >> log.txt
     #    1. download image and run it in a container
     - name: Download image artifact from previous job
       uses: actions/download-artifact@v3  # downloads all artifacts
@@ -140,9 +140,9 @@ jobs:
     - name: Logging
       run: | 
         if [[ -f log_artifact/log.txt ]]; then
+          echo 'here'
           cat log_artifact/log.txt >> log.txt
         fi
-        echo "This Job: First action" >> log.txt
     - name: Checkout Repo
       uses: actions/checkout@v3
     - name: Logging
