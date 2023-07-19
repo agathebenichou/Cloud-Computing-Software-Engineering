@@ -18,16 +18,8 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v3
 
-    - name: Logging
-      run: | 
-        echo "Build Job: Checkout GitHub repository" >> /tmp/log.txt
-
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v2
-
-    - name: Logging
-      run: | 
-        echo "Build Job: Setup Docker Build" >> /tmp/log.txt
 
     - name: Build and export
       id: build-and-export
@@ -73,10 +65,6 @@ jobs:
     - name: Download image artifact from previous job
       uses: actions/download-artifact@v3
 
-    - name: Logging
-      run: | 
-        echo "Test Job: Downloaded image artifact" >> /tmp/log.txt
-
     - name: Load Docker image
       run: docker load --input image_artifact/image.tar
 
@@ -84,18 +72,14 @@ jobs:
       run: | 
         echo "Test Job: Loading Docker image" >> /tmp/log.txt
 
-    - name: Check meals image is loaded
-      run: docker image ls
-
-    - name: Run image in container
-      run: docker run -d -p 8000:8000 meals:latest
-
-    - name: Logging
-      run: | 
-        echo "Test Job: Running image in a container" >> /tmp/log.txt
-
-    - name: Check container is running
-      run: docker ps
+    - name: Log success of running image in container
+      run: |
+        docker run --rm -d -p 8000:8000 meals:latest
+        if [ $? -eq 0 ]; then
+          echo "Container up and running" >> /tmp/log.txt
+        else
+          echo "Container failed to run" >> /tmp/log.txt
+        fi
 
     - name: Checkout
       uses: actions/checkout@v3
