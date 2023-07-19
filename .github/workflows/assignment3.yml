@@ -15,8 +15,7 @@ jobs:
 
     - name: Create log file
       run: |
-        echo "Line 0: $(date +'%Y-%m-%d T %H:%M %Z')" > /tmp/log.txt
-        echo "$(date --iso-8601=minutes)" >> /tmp/log.txt
+        echo "$(date +'%Y-%m-%d T %H:%M %Z')" > /tmp/log.txt
         echo "${{ env.SUBMITTER_NAMES }}" >> /tmp/log.txt
 
     - name: Set up Docker Buildx
@@ -59,20 +58,23 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
+#    - name: Download log artifact from previous job
+#      uses: actions/download-artifact@v3
+#      with:
+#        name: log_artifact
+#        path: /tmp
+#
+#    - name: Download image artifact from previous job
+#      uses: actions/download-artifact@v3
+#      with:
+#        name: image_artifact
+#        path: meals_image
+
     - name: Download log artifact from previous job
       uses: actions/download-artifact@v3
-      with:
-        name: log_artifact
-        path: /tmp
-
-    - name: Download image artifact from previous job
-      uses: actions/download-artifact@v3
-      with:
-        name: image_artifact
-        path: meals_image
 
     - name: Load Docker image
-      run: docker load --input meals_image/image.tar
+      run: docker load --input image_artifact/image.tar
 
     - name: Run Docker image in container
       run: docker run --rm -d -p 8000:8000 meals:latest
@@ -81,9 +83,9 @@ jobs:
       if: always()
       run: | 
         if docker ps | grep -q "meals:latest"; then
-          echo "Container up and running" >> /tmp/log.txt
+          echo "Container up and running" >> log_artifact/tmp/log.txt
         else
-          echo "Container failed to run" >> /tmp/log.txt
+          echo "Container failed to run" >> log_artifact/tmp/log.txt
         fi
 
     - name: Checkout
@@ -108,9 +110,9 @@ jobs:
     - name: Log success of tests
       run: | 
         if [ $? -eq 0 ]; then
-          echo "tests succeeded" >> /tmp/log.txt
+          echo "tests succeeded" >> log_artifact/tmp/log.txt
         else
-          echo "tests failed" >> /tmp/log.txt
+          echo "tests failed" >> log_artifact/tmp/log.txt
         fi
 
     - name: Upload test results
