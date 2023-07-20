@@ -115,14 +115,6 @@ jobs:
           echo "tests failed" >> /tmp/log.txt
         fi
 
-#    - name: Log success of tests
-#      run: |
-#        if [ "${{ steps.pytests.outputs.status }}" = "error" ]; then
-#          echo "tests failed" >> /tmp/log.txt
-#        else
-#          echo "tests succeeded" >> /tmp/log.txt
-#        fi
-
     - name: Upload test results
       if: always()  # always perform this step even if tests fail, to see results
       uses: actions/upload-artifact@v3
