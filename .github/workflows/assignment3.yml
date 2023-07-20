@@ -136,7 +136,7 @@ jobs:
     - name: Checkout Repo
       uses: actions/checkout@v3
 
-    - name: Download image artifact from previous job
+    - name: Download artifacts from previous jobs
       uses: actions/download-artifact@v3
 
     - name: Load Docker image
