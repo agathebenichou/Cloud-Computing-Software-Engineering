@@ -104,23 +104,25 @@ jobs:
       id: pytests
       run: |
         pytest -v tests/assn3_tests.py > assn3_test_results.txt
-
-#    - name: Log success of tests
-#      if: always()
-#      run: |
-#        if [ $? -eq 0 ]; then
-#          echo "tests succeeded" >> /tmp/log.txt
-#        else
-#          echo "tests failed" >> /tmp/log.txt
-#        fi
+        exit_code=$?
+        echo "EXIT_CODE=$exit_code" >> $GITHUB_ENV
 
     - name: Log success of tests
+      if: always()
       run: |
-        if [ "${{ steps.pytests.outputs.status }}" = "error" ]; then
-          echo "tests failed" >> /tmp/log.txt
-        else
+        if [ ${{ env.EXIT_CODE }} -eq 0 ]; then
           echo "tests succeeded" >> /tmp/log.txt
+        else
+          echo "tests failed" >> /tmp/log.txt
         fi
+
+#    - name: Log success of tests
+#      run: |
+#        if [ "${{ steps.pytests.outputs.status }}" = "error" ]; then
+#          echo "tests failed" >> /tmp/log.txt
+#        else
+#          echo "tests succeeded" >> /tmp/log.txt
+#        fi
 
     - name: Upload test results
       if: always()  # always perform this step even if tests fail, to see results
