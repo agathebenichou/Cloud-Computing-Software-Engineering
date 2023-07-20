@@ -105,6 +105,7 @@ jobs:
         pytest -v tests/assn3_tests.py > assn3_test_results.txt
 
     - name: Log success of tests
+      if: always()
       run: | 
         if [ $? -eq 0 ]; then
           echo "tests succeeded" >> /tmp/log.txt
