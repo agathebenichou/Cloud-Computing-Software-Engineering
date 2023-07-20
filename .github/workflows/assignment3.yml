@@ -101,16 +101,25 @@ jobs:
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
     - name: Test with pytest
+      id: pytests
       run: |
         pytest -v tests/assn3_tests.py > assn3_test_results.txt
 
+#    - name: Log success of tests
+#      if: always()
+#      run: |
+#        if [ $? -eq 0 ]; then
+#          echo "tests succeeded" >> /tmp/log.txt
+#        else
+#          echo "tests failed" >> /tmp/log.txt
+#        fi
+
     - name: Log success of tests
-      if: always()
-      run: | 
-        if [ $? -eq 0 ]; then
-          echo "tests succeeded" >> /tmp/log.txt
-        else
+      run: |
+        if [ "${{ steps.pytests.outputs.status }}" = "error" ]; then
           echo "tests failed" >> /tmp/log.txt
+        else
+          echo "tests succeeded" >> /tmp/log.txt
         fi
 
     - name: Upload test results
