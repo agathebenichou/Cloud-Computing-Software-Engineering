@@ -105,7 +105,8 @@ jobs:
       run: |
         pytest -v tests/assn3_tests.py > assn3_test_results.txt
         exit_code=$?
-        echo "EXIT_CODE=$exit_code" >> $GITHUB_ENV
+        echo "EXIT_CODE=$exit_code"
+        echo ${{ env.EXIT_CODE }}
 
     - name: Log success of tests
       if: always()
