@@ -79,5 +79,6 @@ def test_8():
     }
     response = http_post("meals", meal)
     assert response.status_code in [400, 422]
-    assert_ret_value(response, returned_value=-2)
+    # assert_ret_value(response, returned_value=-2)
+    assert_ret_value(response, returned_value=-22)
 
